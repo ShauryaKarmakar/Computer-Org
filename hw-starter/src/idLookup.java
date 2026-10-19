@@ -19,14 +19,14 @@ import java.util.Map;
  *     System.out.println(pci.vendorName(0x8086));
  *     System.out.println(pci.deviceName(0x8086, 0x1237));
  */
-public class idLookup
+public class IdLookup
 {
     private final Map<Integer, String> vendors = new HashMap<>();
     private final Map<Long, String> devices = new HashMap<>();
     private final Map<Integer, String> classes = new HashMap<>();   // pci.ids only
 
     /** Read a pci.ids or usb.ids file. Throws IOException if it cannot be read. */
-    public idLookup(Path file) throws IOException
+    public IdLookup(Path file) throws IOException
     {
         List<String> lines = Files.readAllLines(file);
         int vendor = -1;
@@ -61,26 +61,26 @@ public class idLookup
     }
 
     /** Load pci.ids from the usual places: ./ids, then the system copies. */
-    public static idLookup pci() throws IOException
+    public static IdLookup pci() throws IOException
     {
         return find("pci.ids", "/usr/share/misc/pci.ids", "/usr/share/hwdata/pci.ids");
     }
 
     /** Load usb.ids from the usual places: ./ids, then the system copies. */
-    public static idLookup usb() throws IOException
+    public static IdLookup usb() throws IOException
     {
         return find("usb.ids", "/usr/share/misc/usb.ids", "/usr/share/hwdata/usb.ids",
                     "/var/lib/usbutils/usb.ids");
     }
 
-    private static idLookup find(String name, String... systemPaths) throws IOException
+    private static IdLookup find(String name, String... systemPaths) throws IOException
     {
         Path local = Path.of("ids", name);
         if (Files.isReadable(local))
-            return new idLookup(local);
+            return new IdLookup(local);
         for (String p : systemPaths)
             if (Files.isReadable(Path.of(p)))
-                return new idLookup(Path.of(p));
+                return new IdLookup(Path.of(p));
         throw new IOException("cannot find " + name + " (looked in ./ids and the system folders)");
     }
 

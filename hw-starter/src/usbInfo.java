@@ -15,9 +15,9 @@ import java.util.List;
  * Devices are listed in the same order as the lsusb command (by bus number, then
  * device number). The list is read once; call rescan() to read it again.
  */
-public class usbInfo
+public class USBInfo
 {
-    private static final Path ROOT = sysFile.path("/sys/bus/usb/devices");
+    private static final Path ROOT = SysFile.path("/sys/bus/usb/devices");
     private static List<Path> devices;
 
     private static List<Path> list()
@@ -34,8 +34,8 @@ public class usbInfo
                 }
             }
             // lsusb order: by bus number, then device number
-            found.sort(Comparator.comparingLong((Path p) -> sysFile.number(p.resolve("busnum")))
-                                 .thenComparingLong(p -> sysFile.number(p.resolve("devnum"))));
+            found.sort(Comparator.comparingLong((Path p) -> SysFile.number(p.resolve("busnum")))
+                                 .thenComparingLong(p -> SysFile.number(p.resolve("devnum"))));
             devices = found;
         }
         return devices;
@@ -74,31 +74,31 @@ public class usbInfo
     /** The manufacturer text reported by the device itself, or "" if it has none. */
     public static String getManufacturer(int index)
     {
-        return sysFile.text(list().get(index).resolve("manufacturer"));
+        return SysFile.text(list().get(index).resolve("manufacturer"));
     }
 
     /** The product text reported by the device itself, or "" if it has none. */
     public static String getProduct(int index)
     {
-        return sysFile.text(list().get(index).resolve("product"));
+        return SysFile.text(list().get(index).resolve("product"));
     }
 
     /** The bus number the device is on, or -1. */
     public static int getBusNumber(int index)
     {
-        return (int) sysFile.number(list().get(index).resolve("busnum"));
+        return (int) SysFile.number(list().get(index).resolve("busnum"));
     }
 
     /** The device number on its bus, or -1. */
     public static int getDeviceNumber(int index)
     {
-        return (int) sysFile.number(list().get(index).resolve("devnum"));
+        return (int) SysFile.number(list().get(index).resolve("devnum"));
     }
 
     // The USB id files hold bare hex such as "1d6b" with no 0x prefix.
     private static int hex(int index, String file)
     {
-        String s = sysFile.text(list().get(index).resolve(file));
+        String s = SysFile.text(list().get(index).resolve(file));
         try {
             return Integer.parseInt(s, 16);
         } catch (NumberFormatException e) {

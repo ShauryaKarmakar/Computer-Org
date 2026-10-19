@@ -1,6 +1,4 @@
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Information about the processor, read from /proc/cpuinfo and /proc/stat.
@@ -9,16 +7,16 @@ import java.util.List;
  * (usually 100 ticks per second). To find the load, read them twice, wait about
  * a second, read them again, and work out busy / (busy + idle) from the DIFFERENCES.
  */
-public class cpuInfo
+public class CPUInfo
 {
-    private static final Path CPUINFO = sysFile.path("/proc/cpuinfo");
-    private static final Path STAT = sysFile.path("/proc/stat");
+    private static final Path CPUINFO = SysFile.path("/proc/cpuinfo");
+    private static final Path STAT = SysFile.path("/proc/stat");
 
     /** Number of cores (logical processors) the operating system sees. */
     public static int getCount()
     {
         int count = 0;
-        for (String line : sysFile.lines(CPUINFO))
+        for (String line : SysFile.lines(CPUINFO))
             if (line.startsWith("processor"))
                 count++;
         return count;
@@ -38,7 +36,7 @@ public class cpuInfo
     /** The value of the first line in /proc/cpuinfo whose name is exactly 'name', or "". */
     public static String getField(String name)
     {
-        for (String line : sysFile.lines(CPUINFO)) {
+        for (String line : SysFile.lines(CPUINFO)) {
             int colon = line.indexOf(':');
             if (colon > 0 && line.substring(0, colon).strip().equals(name))
                 return line.substring(colon + 1).strip();
@@ -65,7 +63,7 @@ public class cpuInfo
     private static long[] fields(int core)
     {
         String prefix = "cpu" + core + " ";
-        for (String line : sysFile.lines(STAT)) {
+        for (String line : SysFile.lines(STAT)) {
             if (line.startsWith(prefix)) {
                 String[] part = line.strip().split("\\s+");
                 long[] f = new long[8];

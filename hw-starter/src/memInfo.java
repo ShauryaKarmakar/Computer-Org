@@ -4,9 +4,9 @@ import java.nio.file.Path;
  * Information about memory, read from /proc/meminfo. All sizes are in KiB
  * (1 KiB = 1024 bytes), which is the unit Linux uses in that file.
  */
-public class memInfo
+public class MemInfo
 {
-    private static final Path MEMINFO = sysFile.path("/proc/meminfo");
+    private static final Path MEMINFO = SysFile.path("/proc/meminfo");
 
     /** Total installed memory in KiB, or -1 if it cannot be read. */
     public static long getTotal()
@@ -31,7 +31,7 @@ public class memInfo
     /** The value in KiB of a named line of /proc/meminfo such as "SwapTotal", or -1. */
     public static long field(String name)
     {
-        for (String line : sysFile.lines(MEMINFO)) {
+        for (String line : SysFile.lines(MEMINFO)) {
             if (line.startsWith(name + ":")) {
                 String[] part = line.substring(name.length() + 1).strip().split("\\s+");
                 try {

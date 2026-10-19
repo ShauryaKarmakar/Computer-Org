@@ -18,9 +18,9 @@ import java.util.List;
  * is 24 bits: base class, sub class and interface. See idLookup to turn these
  * numbers into names.
  */
-public class pciInfo
+public class PCIInfo
 {
-    private static final Path ROOT = sysFile.path("/sys/bus/pci/devices");
+    private static final Path ROOT = SysFile.path("/sys/bus/pci/devices");
     private static List<Path> devices;
 
     private static List<Path> list()
@@ -80,18 +80,18 @@ public class pciInfo
     /** The vendor ID, for example 0x8086, or -1 if it cannot be read. */
     public static int getVendorId(int index)
     {
-        return (int) sysFile.number(list().get(index).resolve("vendor"));
+        return (int) SysFile.number(list().get(index).resolve("vendor"));
     }
 
     /** The device ID, or -1 if it cannot be read. */
     public static int getDeviceId(int index)
     {
-        return (int) sysFile.number(list().get(index).resolve("device"));
+        return (int) SysFile.number(list().get(index).resolve("device"));
     }
 
     /** The 24-bit class code, for example 0x060000 for a host bridge, or -1. */
     public static int getClassCode(int index)
     {
-        return (int) sysFile.number(list().get(index).resolve("class"));
+        return (int) SysFile.number(list().get(index).resolve("class"));
     }
 }
