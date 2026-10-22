@@ -64,7 +64,19 @@ public class Main
     System.out.println("CPU load over 1 second = " + cpuLoadRound + "%");
     System.out.println();
 
-        System.out.println("memory: total=" + memInfo.getTotal() + " KiB, used=" + memInfo.getUsed() + " KiB");
+    System.out.println("Memory: total = " + memInfo.getTotal() + " KiB (" + memInfo.getTotal() / (1048576) + " GiB). This is the total amount of physical RAM on this computer. ");
+    System.out.println();
+    System.out.println(" Used = " + memInfo.getUsed() + " KiB (" + memInfo.getUsed() / (1048576) + " GiB). This is the total amount of RAM cuurently being used by the computer.");
+    System.out.println();
+    System.out.println("MemFree: " + memInfo.getFree() + " KiB (" + memInfo.getFree() / (1048576) + " GiB). This is the amount of physical RAM, left unused by the system");
+    System.out.println();
+    System.out.println("Cached: " + memInfo.getCached() + " KiB (" + memInfo.getCached() / (1048576) + " GiB). This is the amount of physical RAM, used as cache memory.");
+    System.out.println();
+    System.out.println("SwapCached: " + memInfo.getSwapCached() + " KiB (" + memInfo.getSwapCached() / (1024) + " MiB). This is the amount of swap, used as cache memory.");
+    System.out.println();
+    System.out.println("Active: " + memInfo.getActive() + " KiB (" + memInfo.getActive() / (1048576) + " GiB). This is the total amount of buffer or page cache memory that is in active use. This is memory that has been recently used and is usually not reclaimed for other purposes.");
+    System.out.println();
+    System.out.println("Inactive: " + memInfo.getInactive() + " KiB (" + memInfo.getInactive() / (1048576) + " GiB). This is the total amount of buffer or page cache memory that are free and available. This is memory that has not been recently used and can be reclaimed for other purposes");
 
         IdLookup pci = IdLookup.pci();
         System.out.println("PCI devices: " + PCIInfo.getCount());
