@@ -14,8 +14,8 @@ public class Main
 {
     public static void main(String[] args) throws Exception
     {
-        cpuInfo.displayCpu();        
-        memInfo.displayMemory();
+        CPUInfo.displayCpu();        
+        MemInfo.displayMemory();
 
         IdLookup pci = IdLookup.pci();
         System.out.println("PCI devices: " + PCIInfo.getCount());
