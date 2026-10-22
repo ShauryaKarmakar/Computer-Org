@@ -9,6 +9,7 @@
  * Run:    java demo        (run it from the folder that contains the ids folder)
  */
 import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
 
 public class Main
 {
@@ -17,16 +18,21 @@ public class Main
         int busy = 0;
         int idle = 0;
         int busy2 = 0;
-        int idle2 = 0;
+        int idle2 = 0;        
+
+        ArrayList<Long> busyList = new ArrayList<Long>();
+        ArrayList<Long> idleList = new ArrayList<Long>();
 
         System.out.println("There are " + cpuInfo.getCount() + " cores on this device.");
         System.out.println("This computer has the " + cpuInfo.getModel() + " model");
         System.out.println();
 
         for (int i = 0; i < cpuInfo.getCount(); i++) {
-        System.out.println("core " + i + ": busy=" + cpuInfo.getBusy(i) + " idle=" + cpuInfo.getIdle(i));
+        //System.out.println("core " + i + ": busy = " + cpuInfo.getBusy(i) + " idle = " + cpuInfo.getIdle(i));
         busy += cpuInfo.getBusy(i);
         idle += cpuInfo.getIdle(i);
+        busyList.add(cpuInfo.getBusy(i));
+        idleList.add(cpuInfo.getIdle(i));
         }
 
         System.out.println();
@@ -35,28 +41,28 @@ public class Main
 
         TimeUnit.SECONDS.sleep(1);
 
-
         for (int i = 0; i < cpuInfo.getCount(); i++) {
-        System.out.println("core " + i + ": busy=" + cpuInfo.getBusy(i) + " idle=" + cpuInfo.getIdle(i));
+        System.out.println("Core " + i + ": Busy ticks = " + cpuInfo.getBusy(i) + ", Idle ticks = " + cpuInfo.getIdle(i));
+        
         busy2 += cpuInfo.getBusy(i);
         idle2 += cpuInfo.getIdle(i);
+            
+        long localBusyT = (cpuInfo.getBusy(i) + busyList.get(i));
+        long localIdleT = (cpuInfo.getIdle(i) + idleList.get(i));
+        double localLoad = ((double) localBusyT / (localBusyT + localIdleT)) * 100;
+        double localLoadRound = Math.round(localLoad * 100.0) / 100.0;
+        
+        System.out.println("This core's load is " + localLoadRound + "%");
+        System.out.println();
         }
-
-    System.out.println();
-    System.out.println("Busy = " + busy);
-    System.out.println("Idle = " + idle);
-    System.out.println();
-    System.out.println("Busy2 = " + busy2);
-    System.out.println("Idle2 = " + idle2);
-    System.out.println();
+    
     int busyT = busy2 - busy;
     int idleT = idle2 - idle;
     double cpuLoad = ((double) busyT / (busyT + idleT)) * 100;
-    System.out.println("BusyT = " + busyT);
-    System.out.println("IdleT = " + idleT);
-    System.out.println("CPU load over 1 second = " + cpuLoad + "%");
+    double cpuLoadRound = Math.round(cpuLoad * 100.0) / 100.0;
+    
+    System.out.println("CPU load over 1 second = " + cpuLoadRound + "%");
     System.out.println();
-
 
         System.out.println("memory: total=" + memInfo.getTotal() + " KiB, used=" + memInfo.getUsed() + " KiB");
 
