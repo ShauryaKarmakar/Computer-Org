@@ -12,10 +12,10 @@ import java.util.concurrent.TimeUnit;
  */
 
 
-public class cpuInfo
+public class CPUInfo
 {
-    private static final Path CPUINFO = sysFile.path("/proc/cpuinfo");
-    private static final Path STAT = sysFile.path("/proc/stat");
+    private static final Path CPUINFO = SysFile.path("/proc/cpuinfo");
+    private static final Path STAT = SysFile.path("/proc/stat");
 
 
     public static void displayCpu() throws InterruptedException {
@@ -30,16 +30,16 @@ public class cpuInfo
         ArrayList<Long> busyList = new ArrayList<Long>();
         ArrayList<Long> idleList = new ArrayList<Long>();
 
-        System.out.println("There are " + cpuInfo.getCount() + " cores on this device.");
-        System.out.println("This computer has the " + cpuInfo.getModel() + " model");
+        System.out.println("There are " + CPUInfo.getCount() + " cores on this device.");
+        System.out.println("This computer has the " + CPUInfo.getModel() + " model");
         System.out.println();
 
 
         for (int i = 0; i < CPUInfo.getCount(); i++) {
-        busy += cpuInfo.getBusy(i);
-        idle += cpuInfo.getIdle(i);
-        busyList.add(cpuInfo.getBusy(i));
-        idleList.add(cpuInfo.getIdle(i));
+        busy += CPUInfo.getBusy(i);
+        idle += CPUInfo.getIdle(i);
+        busyList.add(CPUInfo.getBusy(i));
+        idleList.add(CPUInfo.getIdle(i));
         }
 
         System.out.println("Pausing for 1 second to calculate CPU load.");
@@ -48,12 +48,12 @@ public class cpuInfo
         TimeUnit.SECONDS.sleep(1);
 
 
-        for (int i = 0; i < cpuInfo.getCount(); i++) {
-        System.out.println("Core " + i + ": Busy ticks = " + cpuInfo.getBusy(i) + ", Idle ticks = " + cpuInfo.getIdle(i));
-        busy2 += cpuInfo.getBusy(i);
-        idle2 += cpuInfo.getIdle(i);
-        long localBusyT = (cpuInfo.getBusy(i) + busyList.get(i));
-        long localIdleT = (cpuInfo.getIdle(i) + idleList.get(i));
+        for (int i = 0; i < CPUInfo.getCount(); i++) {
+        System.out.println("Core " + i + ": Busy ticks = " + CPUInfo.getBusy(i) + ", Idle ticks = " + CPUInfo.getIdle(i));
+        busy2 += CPUInfo.getBusy(i);
+        idle2 += CPUInfo.getIdle(i);
+        long localBusyT = (CPUInfo.getBusy(i) + busyList.get(i));
+        long localIdleT = (CPUInfo.getIdle(i) + idleList.get(i));
         double localLoad = ((double) localBusyT / (localBusyT + localIdleT)) * 100;
         double localLoadRound = Math.round(localLoad * 100.0) / 100.0;
         System.out.println("This core's load is " + localLoadRound + "%");
