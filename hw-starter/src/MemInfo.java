@@ -10,8 +10,10 @@ public class MemInfo
 
 
     public static void displayMemory() {
+        System.out.println("_______________________________________________________");
+        System.out.println();   
         System.out.println("Displaying memory details:");
-        System.out.println("________________________________");
+        System.out.println("_______________________________________________________");
         System.out.println();
         System.out.println("Memory: total = " + MemInfo.getTotal() + " KiB (" + MemInfo.getTotal() / (1048576) + " GiB). This is the total amount of physical RAM on this computer. ");
         System.out.println();
