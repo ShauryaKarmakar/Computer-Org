@@ -14,6 +14,31 @@ public class MemInfo
         return field("MemTotal");
     }
 
+    public static long getFree()
+    {
+        return field("MemFree");
+    }
+
+    public static long getCached()
+    {
+        return field("Cached");
+    }
+
+    public static long getSwapCached()
+    {
+        return field("SwapCached");    
+    }
+
+    public static long getActive()
+    {
+        return field("Active");
+    }
+
+    public static long getInactive()
+    {
+        return field("Inactive");
+    }
+    
     /** Memory that programs could use right now (free plus easily reclaimed), in KiB. */
     public static long getAvailable()
     {
