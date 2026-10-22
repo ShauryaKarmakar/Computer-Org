@@ -66,9 +66,11 @@ public class Main
 
     System.out.println("Memory: total = " + memInfo.getTotal() + " KiB (" + memInfo.getTotal() / (1048576) + " GiB). This is the total amount of physical RAM on this computer. ");
     System.out.println();
-    System.out.println(" Used = " + memInfo.getUsed() + " KiB (" + memInfo.getUsed() / (1048576) + " GiB). This is the total amount of RAM cuurently being used by the computer.");
+    System.out.println("Used = " + memInfo.getUsed() + " KiB (" + memInfo.getUsed() / (1048576) + " GiB). This is the total amount of RAM cuurently being used by the computer.");
     System.out.println();
     System.out.println("MemFree: " + memInfo.getFree() + " KiB (" + memInfo.getFree() / (1048576) + " GiB). This is the amount of physical RAM, left unused by the system");
+    System.out.println();
+    System.out.println("MemAvailable: " + memInfo.getAvailable() + " KiB (" + memInfo.getAvailable() / (1048576) + " GiB). This is an estimate of how much memory is actually free for starting new applications without swapping.");
     System.out.println();
     System.out.println("Cached: " + memInfo.getCached() + " KiB (" + memInfo.getCached() / (1048576) + " GiB). This is the amount of physical RAM, used as cache memory.");
     System.out.println();
