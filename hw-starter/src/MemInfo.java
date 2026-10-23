@@ -14,7 +14,7 @@ public class MemInfo
         // Get memory details and set them to variables to reduce the number of times meminfo is read
         long total = MemInfo.getTotal();
         long free = MemInfo.getFree();
-        long used = MemInfo.getUsed();
+        long used = MemInfo.getUsed(total, free);
         long available = MemInfo.getAvailable();
         long buffers = MemInfo.getBuffers();
         long cached = MemInfo.getCached();

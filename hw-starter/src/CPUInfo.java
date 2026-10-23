@@ -71,7 +71,21 @@ public class CPUInfo
         System.out.println();
 
 
+        // Goes through the /proc/stat file and returns various stats for each CPU core
         for (int l = 0; l < count; l++) {
+            long[] stats = fields(l);
+            System.out.println();
+            System.out.println("Core " + l +" Stats: ");
+            System.out.println("User time: " + stats[0]); // Time spent with normal processing in user mode.
+            System.out.println("Nice time: " + stats[1]); // Time spent with niced processes in user mode.
+            System.out.println("System time: " + stats[2]); // Time spent running in kernel mode.
+            System.out.println("Idle time: " + stats[3]); // Time spent doing nothing.
+            System.out.println("IO wait time: " + stats[4]); // Time spent waiting for I/O to complete. This is considered idle time too.
+            System.out.println("Irq time: " + stats[5]); // Time spent serving hardware interrupts. See the description of the intr line for more details.
+            System.out.println("Softirq time: " + stats[6]); // Time spent serving software interrupts.
+            System.out.println("Steal time: " + stats[7]); // Time stolen by other operating systems running in a virtual environment.
+            System.out.println("Guest time: " + stats[8]); // Time spent for running a virtual CPU or guest OS under the control of the kernel.
+            System.out.println("Nice guest time: " + stats[9]); // Time spent running a niced guest in a virtual CPU.
             System.out.println();
         }
     }
@@ -133,8 +147,8 @@ public class CPUInfo
         for (String line : SysFile.lines(STAT)) {
             if (line.startsWith(prefix)) {
                 String[] part = line.strip().split("\\s+");
-                long[] f = new long[8];
-                for (int i = 0; i < 8; i++)
+                long[] f = new long[10];
+                for (int i = 0; i < 10; i++)
                     f[i] = (i + 1 < part.length) ? Long.parseLong(part[i + 1]) : 0;
                 return f;
             }

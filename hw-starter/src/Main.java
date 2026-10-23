@@ -5,7 +5,7 @@
  * the results.
  *
  * Build:  javac *.java
- * Run:    java demo        (run it from the folder that contains the ids folder)
+ * Run:    java Main        (run it from the folder that contains the ids folder)
  */
 
 public class Main
