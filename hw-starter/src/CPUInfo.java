@@ -41,7 +41,7 @@ public class CPUInfo
         System.out.println("There are " + count + " cores on this device.");
         System.out.println();
         if ((siblings / cores) > 1) {
-            System.out.println("This device has hyperthreading. Since it has " + cores + " physical cores yet" + (siblings / cores) + " threads per core. This means that each core in the CPU runs two threads in parallel, meaning it can work much more efficiently than it would otherwise.");
+            System.out.println("This device has hyperthreading. Since it has " + cores + " physical cores yet " + (siblings / cores) + " threads per core (for a total of " + count + "). This means that each core in the CPU runs two threads in parallel, meaning it can work much more efficiently than it would otherwise.");
             
         }
         else {
