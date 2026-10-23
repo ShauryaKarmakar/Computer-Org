@@ -7,10 +7,11 @@ import java.nio.file.Path;
 public class MemInfo
 {
 
-    private static final Path MEMINFO = SysFile.path("/proc/meminfo");
+    private static final Path MEMINFO = SysFile.path("/proc/meminfo");  // Define the path to the /proc/meminfo file for later use
 
-    public static void displayMemory() {
+    public static void displayMemory() { // Class method to display the memory details in a formatted way
 
+        // Get memory details and set them to variables to reduce the number of times meminfo is read
         long total = MemInfo.getTotal();
         long free = MemInfo.getFree();
         long used = MemInfo.getUsed();
@@ -22,15 +23,19 @@ public class MemInfo
         long inactive = MemInfo.getInactive();
 
 
-
+        // Displaying memory details
         System.out.println("_______________________________________________________");
         System.out.println();   
         System.out.println("Displaying memory details:");
         System.out.println("_______________________________________________________");
         System.out.println();
-        System.out.printf("%8s %12s %15s %13s%n", "Detail", "KiB", "MiB", "GiB");
+
+        // Format data into a table
+        System.out.printf("%8s %12s %15s %13s%n", "Name", "KiB", "MiB", "GiB");
         System.out.println("_______________________________________________________");
         System.out.println();
+
+        // Format and display each memory detail
         format("Total", total);
         format("Used", used);
         format("Free", free);
@@ -41,8 +46,11 @@ public class MemInfo
         format("Active", active);
         format("Inactive", inactive);
         System.out.println();
+
+        // Calculate and display the percentage of memory currently in use
         System.out.println("About " + MemInfo.getPercentage(used, total) + "% of the memory is currently in use.");
 
+        // Explanation
         System.out.println("_______________________________________________________");
         System.out.println();
         System.out.println("Explanation of the above details:");
@@ -67,6 +75,7 @@ public class MemInfo
         
     }
     
+    // Method for formating the memory details into a table
     public static void format(String name, long value) {
         double mib = value / (1024.0);
         double gib = value / (1048576.0);
@@ -75,67 +84,71 @@ public class MemInfo
 
 
 
-    /** Total installed memory in KiB, or -1 if it cannot be read. */
+    // Gets total amount of memory in KiB
     public static long getTotal()
     {
         return field("MemTotal");
     }
     
+    // Gets amount of free memory in KiB
     public static long getFree()
     {
         return field("MemFree");
     }
 
+    // Gets amount of cached memory in KiB
     public static long getCached()
     {
         return field("Cached");
     }
 
+    // Gets amount of swap cached memory in KiB
     public static long getSwapCached()
     {
         return field("SwapCached");    
     }
 
+    // Gets amount of active memory in KiB
     public static long getActive()
     {
         return field("Active");
     }
 
+    // Gets amount of inactive memory in KiB
     public static long getInactive()
     {
         return field("Inactive");
     }
     
+    // Gets amount of buffer memory in KiB
     public static long getBuffers()
     {
         return field("Buffers");
     }
-    
 
+    // Calculates the percentage of memory currently being used
     public static long getPercentage(long used, long total) 
     {
         return Math.round((used * 100.0) / total);
     }
 
 
-    /** Memory that programs could use right now (free plus easily reclaimed), in KiB. */
+    // Memory that programs could use right now (free plus easily reclaimed), in KiB. 
     public static long getAvailable()
     {
         return field("MemAvailable");
     }
 
-    /** Memory in use in KiB: total minus available. */
-    public static long getUsed()
+    // Memory in use in KiB: (total minus available)
+    public static long getUsed(long total, long available)
     {
-        long total = getTotal();
-        long available = getAvailable();
-        return (total < 0 || available < 0) ? -1 : total - available;
+        return (total < 0 || available < 0) ? -1 : total - available; // Calculates the amount of memory currently in use(returns -1 if total or available is negative)
     }
 
-    /** The value in KiB of a named line of /proc/meminfo such as "SwapTotal", or -1. */
+    // Goes through the /proc/memInfo file to find (and return) the given field. Returns -1 if it cannot be found
     public static long field(String name)
     {
-        for (String line : sysFile.lines(MEMINFO)) {
+        for (String line : SysFile.lines(MEMINFO)) {
             if (line.startsWith(name + ":")) {
                 String[] part = line.substring(name.length() + 1).strip().split("\\s+");
                 try {

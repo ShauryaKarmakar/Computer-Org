@@ -8,12 +8,11 @@
  * Run:    java demo        (run it from the folder that contains the ids folder)
  */
 
-import java.util.ArrayList;
-
 public class Main
 {
     public static void main(String[] args) throws Exception
     {
+        // Calling the display methods to for CPU and Memory information
         CPUInfo.displayCpu();        
         MemInfo.displayMemory();
 
