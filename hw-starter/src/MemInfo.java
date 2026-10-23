@@ -72,7 +72,7 @@ public class MemInfo
         System.out.println("Active: This is the total amount of buffer or page cache memory that is in active use. This is memory that has been recently used and is usually not reclaimed for other purposes.");
         System.out.println();
         System.out.println("Inactive: This is the total amount of buffer or page cache memory that are free and available. This is memory that has not been recently used and can be reclaimed for other purposes");
-        
+        System.out.println();
     }
     
     // Method for formating the memory details into a table

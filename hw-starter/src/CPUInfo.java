@@ -41,7 +41,8 @@ public class CPUInfo
         System.out.println("There are " + count + " cores on this device.");
         System.out.println();
         if ((siblings / cores) > 1) {
-            System.out.println("This device has hyperthreading.");
+            System.out.println("This device has hyperthreading. Since it has " + cores + " physical cores yet" + (siblings / cores) + " threads per core. This means that each core in the CPU runs two threads in parallel, meaning it can work much more efficiently than it would otherwise.");
+            
         }
         else {
             System.out.println("This device does not have hyperthreading.");
@@ -85,6 +86,7 @@ public class CPUInfo
             long[] stats = fields(l);
             System.out.println();
             System.out.println("Core " + l +" Stats: ");
+            System.out.println("_______________________");
             System.out.println("User time: " + stats[0]); // Time spent with normal processing in user mode.
             System.out.println("Nice time: " + stats[1]); // Time spent with niced processes in user mode.
             System.out.println("System time: " + stats[2]); // Time spent running in kernel mode.
@@ -148,14 +150,14 @@ public class CPUInfo
         return f == null ? -1 : f[3] + f[4];
     }
 
-    // Returns the integer in the 'siblings line' from /proc/cpu
+    // Returns the total number of logical processors on the device
     public static int siblings() {
-        return Integer.parseInt(getField("siblings"));
+        return Integer.parseInt(getField("siblings")); // Takes the string and converts it to int before returning it
     }
 
-    // Returns the integer in the 'cpu cores' line from /proc/cpu
+    // Returns the amount of physical cores on the device
     public static int cores() {
-        return Integer.parseInt(getField("cpu cores"));
+        return Integer.parseInt(getField("cpu cores")); // Takes the string and converts it to int before returning it
     }
 
 
