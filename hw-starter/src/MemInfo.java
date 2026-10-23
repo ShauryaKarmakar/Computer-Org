@@ -68,8 +68,9 @@ public class MemInfo
     }
     
     public static void format(String name, long value) {
-        System.out.printf("%-12s %12s %14s %12s%n", name, value + " KiB", value / (1024) + " MiB", value / (1048576) + " GiB");
-
+        double mib = value / (1024.0);
+        double gib = value / (1048576.0);
+        System.out.printf("%-12s %12s %14s %12s%n", name, value + " KiB", Math.round(mib * 100.0) / 100.0 + " MiB", Math.round(gib * 100.0) / 100.0 + " GiB");
     }
 
 
