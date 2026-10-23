@@ -2,13 +2,18 @@
 
 This repository contains a Java program that reads information about the computer it runs on and reports it in a clear text form: processor, memory, PCI devices and USB devices.
 
-## Build and run
+## Build and run from the command line
 
-    mkdir -p out
+In the hw_starter folder run:
+
+    mkdir -p out 
     javac -d out src/*.java
     java -cp out Main
 
-Run `java` from the hw_starter folder, so that the `ids` folder is found. 
+### Explanation of code
+* `mkdir -p out` creates a new directory named 'out' (`-p` prevents the program from crashing if the directory already exists).
+* `javac -d out src/*.java` runs the java compiler (`-d out` tells the compiler to put all the .class files into the previously made out directory. `src/*.java` the * tells the compiler to compile all the java files in the src folder).
+* `java -cp out Main` executes the compiled program using `java`. it looks for the Main.class file and runs it (`-cp out` gets it to look inside the 'out' directory for the compiled files).
 
 ## The classes
 
