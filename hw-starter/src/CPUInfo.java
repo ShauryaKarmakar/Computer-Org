@@ -25,24 +25,20 @@ public class CPUInfo
         System.out.println("Displaying CPU details (no. of cores, model, CPU load)");
         System.out.println("_______________________________________________________");
     
-        int busy = 0;
-        int idle = 0;
-        int busy2 = 0;
-        int idle2 = 0;
+        String model = CPUInfo.getModel();
+        int count = CPUInfo.getCount();
         double localLoadT = 0;      
 
         ArrayList<Long> busyList = new ArrayList<Long>();
         ArrayList<Long> idleList = new ArrayList<Long>();
 
         System.out.println();
-        System.out.println("This computer has the " + CPUInfo.getModel() + " model.");
-        System.out.println("There are " + CPUInfo.getCount() + " cores on this device.");
+        System.out.println("This computer has the " + model + " model.");
+        System.out.println("There are " + count + " cores on this device.");
         System.out.println();
 
 
-        for (int i = 0; i < cpuInfo.getCount(); i++) {
-        busy += CPUInfo.getBusy(i);
-        idle += CPUInfo.getIdle(i);
+        for (int i = 0; i < count; i++) {
         busyList.add(CPUInfo.getBusy(i));
         idleList.add(CPUInfo.getIdle(i));
         }
@@ -53,13 +49,11 @@ public class CPUInfo
         TimeUnit.SECONDS.sleep(1);
 
 
-        for (int i = 0; i < cpuInfo.getCount(); i++) {
+        for (int i = 0; i < count; i++) {
         System.out.println("Core " + i + ": Busy ticks = " + cpuInfo.getBusy(i) + ", Idle ticks = " + cpuInfo.getIdle(i));
-        busy2 += cpuInfo.getBusy(i);
-        idle2 += cpuInfo.getIdle(i);
         
-        long localBusyT = (cpuInfo.getBusy(i) - busyList.get(i)); 
-        long localIdleT = (cpuInfo.getIdle(i) - idleList.get(i));
+        long localBusyT = (CPUInfo.getBusy(i) - busyList.get(i)); 
+        long localIdleT = (CPUInfo.getIdle(i) - idleList.get(i));
         double localLoad = ((double) localBusyT / (localBusyT + localIdleT)) * 100;
 
         double localLoadRound = Math.round(localLoad * 100.0) / 100.0;
@@ -69,7 +63,7 @@ public class CPUInfo
         System.out.println();
         }
 
-        System.out.println("Average load = " + (Math.round(localLoadT / cpuInfo.getCount() * 100.0) / 100.0) + "%");
+        System.out.println("Average load = " + (Math.round(localLoadT / count * 100.0) / 100.0) + "%");
         System.out.println();
 
 
