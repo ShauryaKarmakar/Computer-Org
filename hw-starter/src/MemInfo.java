@@ -15,23 +15,49 @@ public class MemInfo
         System.out.println("Displaying memory details:");
         System.out.println("_______________________________________________________");
         System.out.println();
-        System.out.println("Memory: total = " + MemInfo.getTotal() + " KiB (" + MemInfo.getTotal() / (1048576) + " GiB). This is the total amount of physical RAM on this computer. ");
+        System.out.printf("%8s %12s %15s %13s%n", "Detail", "KiB", "MiB", "GiB");
+        System.out.println("_______________________________________________________");
         System.out.println();
-        System.out.println("Used = " + MemInfo.getUsed() + " KiB (" + MemInfo.getUsed() / (1048576) + " GiB). This is the total amount of RAM curently being used by the computer.");
+        format("Total", MemInfo.getTotal());
+        format("Used", MemInfo.getUsed());
+        format("Free", MemInfo.getFree());
+        format("Available", MemInfo.getAvailable());
+        format("Buffers", MemInfo.getBuffers());
+        format("Cached", MemInfo.getCached());
+        format("SwapCached", MemInfo.getSwapCached());
+        format("Active", MemInfo.getActive());
+        format("Inactive", MemInfo.getInactive());
         System.out.println("About " + MemInfo.getPercentage() + "% of the memory is currently in use.");
+
+        System.out.println("_______________________________________________________");
         System.out.println();
-        System.out.println("MemFree: " + MemInfo.getFree() + " KiB (" + MemInfo.getFree() / (1048576) + " GiB). This is the amount of physical RAM, left unused by the system");
+        System.out.println("Explanation of the above details:");
         System.out.println();
-        System.out.println("Cached: " + MemInfo.getCached() + " KiB (" + MemInfo.getCached() / (1048576) + " GiB). This is the amount of physical RAM, used as cache memory.");
+        System.out.println("Total: This is the total amount of physical RAM on this computer. ");
         System.out.println();
-        System.out.println("SwapCached: " + MemInfo.getSwapCached() + " KiB (" + MemInfo.getSwapCached() / (1024) + " MiB). This is the amount of swap, used as cache memory.");
+        System.out.println("Used: This is the total amount of RAM curently being used by the computer (total minus available).");
         System.out.println();
-        System.out.println("Active: " + MemInfo.getActive() + " KiB (" + MemInfo.getActive() / (1048576) + " GiB). This is the total amount of buffer or page cache memory that is in active use. This is memory that has been recently used and is usually not reclaimed for other purposes.");
+        System.out.println("Free: This is the amount of physical RAM, left unused by the system");
         System.out.println();
-        System.out.println("Inactive: " + MemInfo.getInactive() + " KiB (" + MemInfo.getInactive() / (1048576) + " GiB). This is the total amount of buffer or page cache memory that are free and available. This is memory that has not been recently used and can be reclaimed for other purposes");
+        System.out.println("Available: This is the amount of physical RAM, available for use by programs (free plus easily reclaimed).");
+        System.out.println();
+        System.out.println("Buffers: The amount of physical RAM, in kilobytes, used for file buffers");
+        System.out.println();
+        System.out.println("Cached: This is the amount of physical RAM, used as cache memory.");
+        System.out.println();
+        System.out.println("SwapCached: This is the amount of swap, used as cache memory.");
+        System.out.println();
+        System.out.println("Active: This is the total amount of buffer or page cache memory that is in active use. This is memory that has been recently used and is usually not reclaimed for other purposes.");
+        System.out.println();
+        System.out.println("Inactive: This is the total amount of buffer or page cache memory that are free and available. This is memory that has not been recently used and can be reclaimed for other purposes");
         
     }
     
+    public static void format(String name, long value) {
+        System.out.printf("%-12s %12s %14s %12s%n", name, value + " KiB", value / (1024) + " MiB", value / (1048576) + " GiB");
+
+    }
+
 
 
     /** Total installed memory in KiB, or -1 if it cannot be read. */
@@ -65,6 +91,10 @@ public class MemInfo
         return field("Inactive");
     }
     
+    public static long getBuffers()
+    {
+        return field("Buffers");
+    }
     
 
     public static long getPercentage() 
@@ -90,7 +120,7 @@ public class MemInfo
     /** The value in KiB of a named line of /proc/meminfo such as "SwapTotal", or -1. */
     public static long field(String name)
     {
-        for (String line : SysFile.lines(MEMINFO)) {
+        for (String line : sysFile.lines(MEMINFO)) {
             if (line.startsWith(name + ":")) {
                 String[] part = line.substring(name.length() + 1).strip().split("\\s+");
                 try {
