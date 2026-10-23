@@ -6,10 +6,23 @@ import java.nio.file.Path;
  */
 public class MemInfo
 {
+
     private static final Path MEMINFO = SysFile.path("/proc/meminfo");
 
-
     public static void displayMemory() {
+
+        long total = MemInfo.getTotal();
+        long free = MemInfo.getFree();
+        long used = MemInfo.getUsed();
+        long available = MemInfo.getAvailable();
+        long buffers = MemInfo.getBuffers();
+        long cached = MemInfo.getCached();
+        long swapCached = MemInfo.getSwapCached();
+        long active = MemInfo.getActive();
+        long inactive = MemInfo.getInactive();
+
+
+
         System.out.println("_______________________________________________________");
         System.out.println();   
         System.out.println("Displaying memory details:");
@@ -18,16 +31,17 @@ public class MemInfo
         System.out.printf("%8s %12s %15s %13s%n", "Detail", "KiB", "MiB", "GiB");
         System.out.println("_______________________________________________________");
         System.out.println();
-        format("Total", MemInfo.getTotal());
-        format("Used", MemInfo.getUsed());
-        format("Free", MemInfo.getFree());
-        format("Available", MemInfo.getAvailable());
-        format("Buffers", MemInfo.getBuffers());
-        format("Cached", MemInfo.getCached());
-        format("SwapCached", MemInfo.getSwapCached());
-        format("Active", MemInfo.getActive());
-        format("Inactive", MemInfo.getInactive());
-        System.out.println("About " + MemInfo.getPercentage() + "% of the memory is currently in use.");
+        format("Total", total);
+        format("Used", used);
+        format("Free", free);
+        format("Available", available);
+        format("Buffers", buffers);
+        format("Cached", cached);
+        format("SwapCached", swapCached);
+        format("Active", active);
+        format("Inactive", inactive);
+        System.out.println();
+        System.out.println("About " + MemInfo.getPercentage(used, total) + "% of the memory is currently in use.");
 
         System.out.println("_______________________________________________________");
         System.out.println();
@@ -97,9 +111,9 @@ public class MemInfo
     }
     
 
-    public static long getPercentage() 
+    public static long getPercentage(long used, long total) 
     {
-        return Math.round((MemInfo.getUsed() * 100.0) / MemInfo.getTotal());
+        return Math.round((used * 100.0) / total);
     }
 
 
