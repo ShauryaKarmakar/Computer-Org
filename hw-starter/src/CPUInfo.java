@@ -27,6 +27,8 @@ public class CPUInfo
         //Set model type and number of cores to variables to avoid constantly reading the /proc/cpuinfo file
         String model = CPUInfo.getModel();
         int count = CPUInfo.getCount();
+        int siblings = CPUInfo.siblings();
+        int cores = CPUInfo.cores();
 
         // Initialise variables and lists
         double localLoadT = 0;      
@@ -37,6 +39,13 @@ public class CPUInfo
         System.out.println();
         System.out.println("This computer has the " + model + " model.");
         System.out.println("There are " + count + " cores on this device.");
+        System.out.println();
+        if ((siblings / cores) > 1) {
+            System.out.println("This device has hyperthreading.");
+        }
+        else {
+            System.out.println("This device does not have hyperthreading.");
+        }
         System.out.println();
 
         // First iteration for the cores, busy and idle ticks are stored in a list for future use
@@ -138,6 +147,17 @@ public class CPUInfo
         long[] f = fields(core);
         return f == null ? -1 : f[3] + f[4];
     }
+
+    // Returns the integer in the 'siblings line' from /proc/cpu
+    public static int siblings() {
+        return Integer.parseInt(getField("siblings"));
+    }
+
+    // Returns the integer in the 'cpu cores' line from /proc/cpu
+    public static int cores() {
+        return Integer.parseInt(getField("cpu cores"));
+    }
+
 
     // The numbers from the "cpuN" line of /proc/stat, or null if there is no such core. 
     // Fetches data from the /proc/stat file

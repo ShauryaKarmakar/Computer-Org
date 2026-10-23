@@ -18,7 +18,7 @@ In the hw_starter folder run:
 ## The classes
 
 All methods are `static`. A value that cannot be read comes back as -1 (or an
-empty string), so a missing file does not crash your program.
+empty string), so a missing file does not crash program.
 
 | Class | Methods | Source |
 | --- | --- | --- |
