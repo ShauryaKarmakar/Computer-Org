@@ -4,23 +4,23 @@ import java.nio.file.Path;
  * Information about memory, read from /proc/meminfo. All sizes are in KiB
  * (1 KiB = 1024 bytes), which is the unit Linux uses in that file.
  */
-public class MemInfo
+public class memInfo
 {
 
-    private static final Path MEMINFO = SysFile.path("/proc/meminfo");  // Define the path to the /proc/meminfo file for later use
+    private static final Path MEMINFO = sysFile.path("/proc/meminfo");  // Define the path to the /proc/meminfo file for later use
 
     public static void displayMemory() { // Class method to display the memory details in a formatted way
 
         // Get memory details and set them to variables to reduce the number of times meminfo is read
-        long total = MemInfo.getTotal();
-        long free = MemInfo.getFree();
-        long used = MemInfo.getUsed(total, free);
-        long available = MemInfo.getAvailable();
-        long buffers = MemInfo.getBuffers();
-        long cached = MemInfo.getCached();
-        long swapCached = MemInfo.getSwapCached();
-        long active = MemInfo.getActive();
-        long inactive = MemInfo.getInactive();
+        long total = memInfo.getTotal();
+        long free = memInfo.getFree();
+        long used = memInfo.getUsed(total, free);
+        long available = memInfo.getAvailable();
+        long buffers = memInfo.getBuffers();
+        long cached = memInfo.getCached();
+        long swapCached = memInfo.getSwapCached();
+        long active = memInfo.getActive();
+        long inactive = memInfo.getInactive();
 
 
         // Displaying memory details
@@ -48,7 +48,7 @@ public class MemInfo
         System.out.println();
 
         // Calculate and display the percentage of memory currently in use
-        System.out.println("About " + MemInfo.getPercentage(used, total) + "% of the memory is currently in use.");
+        System.out.println("About " + memInfo.getPercentage(used, total) + "% of the memory is currently in use.");
 
         // Explanation
         System.out.println("_______________________________________________________");
@@ -148,7 +148,7 @@ public class MemInfo
     // Goes through the /proc/memInfo file to find (and return) the given field. Returns -1 if it cannot be found
     public static long field(String name)
     {
-        for (String line : SysFile.lines(MEMINFO)) {
+        for (String line : sysFile.lines(MEMINFO)) {
             if (line.startsWith(name + ":")) {
                 String[] part = line.substring(name.length() + 1).strip().split("\\s+");
                 try {

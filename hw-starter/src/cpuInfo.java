@@ -11,10 +11,10 @@ import java.util.concurrent.TimeUnit;
  */
 
 
-public class CPUInfo
+public class cpuInfo
 {
-    private static final Path CPUINFO = SysFile.path("/proc/cpuinfo");
-    private static final Path STAT = SysFile.path("/proc/stat");
+    private static final Path CPUINFO = sysFile.path("/proc/cpuinfo");
+    private static final Path STAT = sysFile.path("/proc/stat");
 
 
     public static void displayCpu() throws InterruptedException { // Method to display the CPU details, InterruptedException is needed for the TimeUnit.SECONDS.sleep() method
@@ -25,10 +25,10 @@ public class CPUInfo
         System.out.println("_______________________________________________________");
     
         //Set model type and number of cores to variables to avoid constantly reading the /proc/cpuinfo file
-        String model = CPUInfo.getModel();
-        int count = CPUInfo.getCount();
-        int siblings = CPUInfo.siblings();
-        int cores = CPUInfo.cores();
+        String model = cpuInfo.getModel();
+        int count = cpuInfo.getCount();
+        int siblings = cpuInfo.siblings();
+        int cores = cpuInfo.cores();
 
         // Initialise variables and lists
         double localLoadT = 0;      
@@ -51,8 +51,8 @@ public class CPUInfo
 
         // First iteration for the cores, busy and idle ticks are stored in a list for future use
         for (int i = 0; i < count; i++) {
-        busyList.add(CPUInfo.getBusy(i));
-        idleList.add(CPUInfo.getIdle(i));
+        busyList.add(cpuInfo.getBusy(i));
+        idleList.add(cpuInfo.getIdle(i));
         }
 
         System.out.println("Pausing for 1 second to calculate CPU load."); 
@@ -64,13 +64,13 @@ public class CPUInfo
 
         // Second iteration for the cores, each core is printed out alongside its busy / idle ticks and its average load
         for (int i = 0; i < count; i++) {
-        System.out.println("Core " + i + ": Busy ticks = " + CPUInfo.getBusy(i) + ", Idle ticks = " + CPUInfo.getIdle(i));
+        System.out.println();
+        System.out.println("Core " + i + " Stats: "); 
         
         // Goes through the /proc/stat file and returns various stats for each CPU core
         long[] stats = fields(i);
-        System.out.println();
-        System.out.println("Core " + i +" Stats: ");
         System.out.println("_______________________");
+        System.out.println("Busy ticks = " + cpuInfo.getBusy(i) + ", Idle ticks = " + cpuInfo.getIdle(i));
         System.out.println("User time: " + stats[0]); // Time spent with normal processing in user mode.
         System.out.println("Nice time: " + stats[1]); // Time spent with niced processes in user mode.
         System.out.println("System time: " + stats[2]); // Time spent running in kernel mode.
@@ -84,8 +84,8 @@ public class CPUInfo
         System.out.println();
 
 
-        long localBusyT = (CPUInfo.getBusy(i) - busyList.get(i));  //Minuses the previous iteration's busy value from the current iteration's busy value to get the difference
-        long localIdleT = (CPUInfo.getIdle(i) - idleList.get(i));
+        long localBusyT = (cpuInfo.getBusy(i) - busyList.get(i));  //Minuses the previous iteration's busy value from the current iteration's busy value to get the difference
+        long localIdleT = (cpuInfo.getIdle(i) - idleList.get(i));
         double localLoad = ((double) localBusyT / (localBusyT + localIdleT)) * 100; //localBusyT is changed from long to double to save the decimal values
 
         double localLoadRound = Math.round(localLoad * 100.0) / 100.0;
@@ -105,7 +105,7 @@ public class CPUInfo
     public static int getCount()
     {
         int count = 0;
-        for (String line : SysFile.lines(CPUINFO))
+        for (String line : sysFile.lines(CPUINFO))
             if (line.startsWith("processor"))
                 count++;
         return count;
@@ -126,7 +126,7 @@ public class CPUInfo
     // Goes through the cpuUnfo file and returns the line that equals the name that it has been given (or "" if it can't find it)
     public static String getField(String name)
     {
-        for (String line : SysFile.lines(CPUINFO)) {
+        for (String line : sysFile.lines(CPUINFO)) {
             int colon = line.indexOf(':');
             if (colon > 0 && line.substring(0, colon).strip().equals(name))
                 return line.substring(colon + 1).strip();
@@ -165,7 +165,7 @@ public class CPUInfo
     private static long[] fields(int core)
     {
         String prefix = "cpu" + core + " ";
-        for (String line : SysFile.lines(STAT)) {
+        for (String line : sysFile.lines(STAT)) {
             if (line.startsWith(prefix)) {
                 String[] part = line.strip().split("\\s+");
                 long[] f = new long[10];

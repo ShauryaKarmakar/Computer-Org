@@ -8,7 +8,7 @@ import java.util.List;
  * Every method returns a harmless default (empty text or -1) when a file does not
  * exist, so a missing file never crashes a program.
  */
-class SysFile
+class sysFile
 {
     /**
      * Where /proc and /sys are looked for. Normally this is empty, meaning the real
