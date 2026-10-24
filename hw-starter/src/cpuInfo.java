@@ -24,10 +24,10 @@ public class cpuInfo
         System.out.println("_______________________________________________________");
     
         //Set model type and number of cores to variables to avoid constantly reading the /proc/cpuinfo file
-        String model = cpuInfo.getModel();
-        int count = cpuInfo.getCount();
-        int siblings = cpuInfo.siblings();
-        int cores = cpuInfo.cores();
+        String model = getModel();
+        int count = getCount();
+        int siblings = siblings();
+        int cores = cores();
 
         // Initialise variables and lists
         double localLoadT = 0;      
@@ -48,8 +48,8 @@ public class cpuInfo
 
         // First iteration for the cores, busy and idle ticks are stored in a list for future use
         for (int i = 0; i < count; i++) {
-        busyList.add(cpuInfo.getBusy(i));
-        idleList.add(cpuInfo.getIdle(i));
+        busyList.add(getBusy(i));
+        idleList.add(getIdle(i));
         }
 
         System.out.println("Pausing for 1 second to calculate CPU load. \n"); 
@@ -68,7 +68,7 @@ public class cpuInfo
         
         System.out.println("_______________________");
         System.out.println("Processor clock speed: " + getMHz() + " MHz");
-        System.out.println("Busy ticks = " + cpuInfo.getBusy(i) + ", Idle ticks = " + cpuInfo.getIdle(i));
+        System.out.println("Busy ticks = " + getBusy(i) + ", Idle ticks = " + getIdle(i));
         System.out.println("User time: " + stats[0]); // Time spent with normal processing in user mode.
         System.out.println("Nice time: " + stats[1]); // Time spent with niced processes in user mode.
         System.out.println("System time: " + stats[2]); // Time spent running in kernel mode.
@@ -83,8 +83,8 @@ public class cpuInfo
         System.out.println();
 
 
-        long localBusyT = (cpuInfo.getBusy(i) - busyList.get(i));  //Minuses the previous iteration's busy value from the current iteration's busy value to get the difference
-        long localIdleT = (cpuInfo.getIdle(i) - idleList.get(i));
+        long localBusyT = (getBusy(i) - busyList.get(i));  //Minuses the previous iteration's busy value from the current iteration's busy value to get the difference
+        long localIdleT = (getIdle(i) - idleList.get(i));
         double localLoad = ((double) localBusyT / (localBusyT + localIdleT)) * 100; //localBusyT is changed from long to double to save the decimal values
 
         double localLoadRound = Math.round(localLoad * 100.0) / 100.0;
@@ -110,8 +110,7 @@ public class cpuInfo
         System.out.println("Steal Time:      Time a virtual CPU wanted to run but had to wait as another virtual machine was being serviced (only really applies in virutlised environments like AWS EC2 or VMware).\n");
         System.out.println("Guest Time:      Time spent running a virtual CPU for a guest operating system (Already included in 'Guest Time').\n");
         System.out.println("Nice Guest Time: Time spent running a virutal CPU for a gest OS with a lower priority (already included in 'Nice Time')\n");
-
-        System.out.println("__________________________________________________");
+        System.out.println("_______________________________________________________");
     }
 
 

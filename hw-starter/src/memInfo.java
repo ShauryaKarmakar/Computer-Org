@@ -12,15 +12,15 @@ public class memInfo
     public static void displayMemory() { // Class method to display the memory details in a formatted way
 
         // Get memory details and set them to variables to reduce the number of times meminfo is read
-        long total = memInfo.getTotal();
-        long free = memInfo.getFree();
-        long used = memInfo.getUsed(total, free);
-        long available = memInfo.getAvailable();
-        long buffers = memInfo.getBuffers();
-        long cached = memInfo.getCached();
-        long swapCached = memInfo.getSwapCached();
-        long active = memInfo.getActive();
-        long inactive = memInfo.getInactive();
+        long total = getTotal();
+        long free = getFree();
+        long used = getUsed(total, free);
+        long available = getAvailable();
+        long buffers = getBuffers();
+        long cached = getCached();
+        long swapCached = getSwapCached();
+        long active = getActive();
+        long inactive = getInactive();
 
 
         // Displaying memory details
@@ -45,7 +45,7 @@ public class memInfo
         System.out.println();
 
         // Calculate and display the percentage of memory currently in use
-        System.out.println("About " + memInfo.getPercentage(used, total) + "% of the memory is currently in use.");
+        System.out.println("About " + getPercentage(used, total) + "% of the memory is currently in use.");
 
         // Explanation
         System.out.println("_______________________________________________________\n");
