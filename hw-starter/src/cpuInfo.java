@@ -64,6 +64,8 @@ public class cpuInfo
         
         // Goes through the /proc/stat file and returns various stats for each CPU core
         long[] stats = fields(i);
+        long totalT = stats[0] + stats[1] + stats[2] + stats[3] + stats[4] + stats[5] + stats[6] + stats[7];
+        
         System.out.println("_______________________");
         System.out.println("Busy ticks = " + cpuInfo.getBusy(i) + ", Idle ticks = " + cpuInfo.getIdle(i));
         System.out.println("User time: " + stats[0]); // Time spent with normal processing in user mode.
@@ -76,6 +78,7 @@ public class cpuInfo
         System.out.println("Steal time: " + stats[7]); // Time stolen by other operating systems running in a virtual environment.
         System.out.println("Guest time: " + stats[8]); // Time spent for running a virtual CPU or guest OS under the control of the kernel.
         System.out.println("Nice guest time: " + stats[9]); // Time spent running a niced guest in a virtual CPU.
+        System.out.println("Total amount of time since boot: " + totalT);
         System.out.println();
 
 
@@ -91,7 +94,7 @@ public class cpuInfo
         }
 
         System.out.println("Average CPU load = " + (Math.round(localLoadT / count * 100.0) / 100.0) + "%\n");
-        System.out.println("Explanation of CPU details: ");
+        System.out.println("Explanation of CPU details: \n");
         System.out.println("____________________________\n");
         System.out.println("Busy:            Time the CPU spends working on a task (user, nice, system, irq, softirq and steal time combined).\n");
         System.out.println("Idle:            Time the CPU spends doing nothing (idle and iowait time combined).\n");
