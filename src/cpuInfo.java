@@ -7,7 +7,7 @@ import java.nio.file.Path;
  * (usually 100 ticks per second). To find the load, read them twice, wait about
  * a second, read them again, and work out busy / (busy + idle) from the DIFFERENCES.
  */
-public class CPUInfo
+class CPUInfo
 {
     private static final Path CPUINFO = SysFile.path("/proc/cpuinfo");
     private static final Path STAT = SysFile.path("/proc/stat");

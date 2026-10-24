@@ -15,11 +15,11 @@ import java.util.Map;
  *
  * Use it like this:
  *
- *     idLookup pci = idLookup.pci();
+ *     IdLookup pci = IdLookup.pci();
  *     System.out.println(pci.vendorName(0x8086));
  *     System.out.println(pci.deviceName(0x8086, 0x1237));
  */
-public class IdLookup
+class IdLookup
 {
     private final Map<Integer, String> vendors = new HashMap<>();
     private final Map<Long, String> devices = new HashMap<>();

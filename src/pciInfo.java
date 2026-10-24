@@ -15,10 +15,10 @@ import java.util.List;
  * read it again.
  *
  * Vendor and device IDs are numbers (for example 0x8086 is Intel). The class code
- * is 24 bits: base class, sub class and interface. See idLookup to turn these
+ * is 24 bits: base class, sub class and interface. See IdLookup to turn these
  * numbers into names.
  */
-public class PCIInfo
+class PCIInfo
 {
     private static final Path ROOT = SysFile.path("/sys/bus/pci/devices");
     private static List<Path> devices;

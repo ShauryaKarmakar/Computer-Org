@@ -15,7 +15,7 @@ import java.util.List;
  * Devices are listed in the same order as the lsusb command (by bus number, then
  * device number). The list is read once; call rescan() to read it again.
  */
-public class USBInfo
+class USBInfo
 {
     private static final Path ROOT = SysFile.path("/sys/bus/usb/devices");
     private static List<Path> devices;

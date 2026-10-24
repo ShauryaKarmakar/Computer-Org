@@ -4,7 +4,7 @@ import java.nio.file.Path;
  * Information about memory, read from /proc/meminfo. All sizes are in KiB
  * (1 KiB = 1024 bytes), which is the unit Linux uses in that file.
  */
-public class MemInfo
+class MemInfo
 {
     private static final Path MEMINFO = SysFile.path("/proc/meminfo");
 
