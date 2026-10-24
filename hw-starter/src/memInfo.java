@@ -24,16 +24,13 @@ public class memInfo
 
 
         // Displaying memory details
-        System.out.println("_______________________________________________________");
-        System.out.println();   
+        System.out.println("_______________________________________________________\n");
         System.out.println("Displaying memory details:");
-        System.out.println("_______________________________________________________");
-        System.out.println();
+        System.out.println("_______________________________________________________\n");
 
         // Format data into a table
         System.out.printf("%8s %12s %15s %13s%n", "Name", "KiB", "MiB", "GiB");
-        System.out.println("_______________________________________________________");
-        System.out.println();
+        System.out.println("_______________________________________________________\n");
 
         // Format and display each memory detail
         format("Total", total);
@@ -51,28 +48,17 @@ public class memInfo
         System.out.println("About " + memInfo.getPercentage(used, total) + "% of the memory is currently in use.");
 
         // Explanation
-        System.out.println("_______________________________________________________");
-        System.out.println();
-        System.out.println("Explanation of the above details:");
-        System.out.println();
-        System.out.println("Total: This is the total amount of physical RAM on this computer. ");
-        System.out.println();
-        System.out.println("Used: This is the total amount of RAM curently being used by the computer (total minus available).");
-        System.out.println();
-        System.out.println("Free: This is the amount of physical RAM, left unused by the system");
-        System.out.println();
-        System.out.println("Available: This is the amount of physical RAM, available for use by programs (free plus easily reclaimed).");
-        System.out.println();
-        System.out.println("Buffers: The amount of physical RAM, in kilobytes, used for file buffers");
-        System.out.println();
-        System.out.println("Cached: This is the amount of physical RAM, used as cache memory.");
-        System.out.println();
-        System.out.println("SwapCached: This is the amount of swap, used as cache memory.");
-        System.out.println();
-        System.out.println("Active: This is the total amount of buffer or page cache memory that is in active use. This is memory that has been recently used and is usually not reclaimed for other purposes.");
-        System.out.println();
-        System.out.println("Inactive: This is the total amount of buffer or page cache memory that are free and available. This is memory that has not been recently used and can be reclaimed for other purposes");
-        System.out.println();
+        System.out.println("_______________________________________________________\n");
+        System.out.println("Explanation of the above details:\n");
+        System.out.println("Total:      This is the total amount of physical RAM on this computer. \n");
+        System.out.println("Used:       This is the total amount of RAM curently being used by the computer (total minus available).\n");
+        System.out.println("Free:       This is the amount of physical RAM, left unused by the system.\n");
+        System.out.println("Available:  This is the amount of physical RAM, available for use by programs (free plus easily reclaimed).");
+        System.out.println("Buffers:    The amount of physical RAM, in kilobytes, used for file buffers.\n");
+        System.out.println("Cached:     This is the amount of physical RAM, used as cache memory.\n");
+        System.out.println("SwapCached: This is the amount of swap, used as cache memory.\n");
+        System.out.println("Active:     This is the total amount of buffer or page cache memory that is in active use. This is memory that has been recently used and is usually not reclaimed for other purposes.\n");
+        System.out.println("Inactive:   This is the total amount of buffer or page cache memory that are free and available. This is memory that has not been recently used and can be reclaimed for other purposes\n");
     }
     
     // Method for formating the memory details into a table

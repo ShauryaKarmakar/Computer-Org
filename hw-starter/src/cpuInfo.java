@@ -19,8 +19,7 @@ public class cpuInfo
 
     public static void displayCpu() throws InterruptedException { // Method to display the CPU details, InterruptedException is needed for the TimeUnit.SECONDS.sleep() method
 
-        System.out.println("_______________________________________________________");
-        System.out.println();
+        System.out.println("_______________________________________________________\n");
         System.out.println("Displaying CPU details (no. of cores, model, CPU load)");
         System.out.println("_______________________________________________________");
     
@@ -36,10 +35,8 @@ public class cpuInfo
         ArrayList<Long> idleList = new ArrayList<Long>();
 
         // Printing out the model and number of cores
-        System.out.println();
-        System.out.println("This computer has the " + model + " model.");
-        System.out.println("There are " + count + " cores on this device.");
-        System.out.println();
+        System.out.println("\nThis computer has the " + model + " model.");
+        System.out.println("There are " + count + " cores on this device.\n");
         if ((siblings / cores) > 1) {
             System.out.println("This device has hyperthreading. Since it has " + cores + " physical cores yet " + (siblings / cores) + " threads per core (for a total of " + count + "). This means that each core in the CPU runs two threads in parallel, meaning it can work much more efficiently than it would otherwise.");
             
@@ -55,8 +52,7 @@ public class cpuInfo
         idleList.add(cpuInfo.getIdle(i));
         }
 
-        System.out.println("Pausing for 1 second to calculate CPU load."); 
-        System.out.println();
+        System.out.println("Pausing for 1 second to calculate CPU load. \n"); 
 
         TimeUnit.SECONDS.sleep(1); // Pausing for a second to get different busy / idle values
 
@@ -64,8 +60,7 @@ public class cpuInfo
 
         // Second iteration for the cores, each core is printed out alongside its busy / idle ticks and its average load
         for (int i = 0; i < count; i++) {
-        System.out.println();
-        System.out.println("Core " + i + " Stats: "); 
+        System.out.println("\nCore " + i + " Stats: "); 
         
         // Goes through the /proc/stat file and returns various stats for each CPU core
         long[] stats = fields(i);
@@ -95,23 +90,21 @@ public class cpuInfo
         System.out.println();
         }
 
-        System.out.println("Average CPU load = " + (Math.round(localLoadT / count * 100.0) / 100.0) + "%");
-        System.out.println();
+        System.out.println("Average CPU load = " + (Math.round(localLoadT / count * 100.0) / 100.0) + "%\n");
         System.out.println("Explanation of CPU details: ");
-        System.out.println("____________________________");
-        System.out.println();
-        System.out.println("Busy:            Time the CPU spends working on a task (user, nice, system, irq, softirq and steal time combined).");
-        System.out.println("Idle:            Time the CPU spends doing nothing (idle and iowait time combined).");
-        System.out.println("User Time:       Time spent executing standard code in user space. EG: using a web browser.");
-        System.out.println("Nice Time:       Time the CPU spends executing user space processes that are low priority (only executed if the CPU has nothing better to do). EG: background video rendering, crypto mining.");
-        System.out.println("System time:     Time spent executing code inside the Linux kernal itself. EG: when reading a file from the disk or sending data over a network socket.");
-        System.out.println("Idle Time:       Time the CPU spends doing nothing");
-        System.out.println("IO Wait Time:    Time the CPU spends idle specifically because it was waiting for direction (input or output).");
-        System.out.println("Irq Time:        Time spent servicing physical hardware interrupts, the CPU stops its current task, moves the incoming instruction to RAM and sends a signal to softirq to process it. EG: keyboard presses or a mouse input.");
-        System.out.println("Softirq Time:    Time spent executing the lower priority interrupt tasks set by the irq.");
-        System.out.println("Steal Time:      Time a virtual CPU wanted to run but had to wait as another virtual machine was being serviced (only really applies in virutlised environments like AWS EC2 or VMware).");
-        System.out.println("Guest Time:      Time spent running a virtual CPU for a guest operating system (Already included in 'Guest Time').");
-        System.out.println("Nice Guest Time: Time spent running a virutal CPU for a gest OS with a lower priority (already included in 'Nice Time'");
+        System.out.println("____________________________\n");
+        System.out.println("Busy:            Time the CPU spends working on a task (user, nice, system, irq, softirq and steal time combined).\n");
+        System.out.println("Idle:            Time the CPU spends doing nothing (idle and iowait time combined).\n");
+        System.out.println("User Time:       Time spent executing standard code in user space. EG: using a web browser.\n");
+        System.out.println("Nice Time:       Time the CPU spends executing user space processes that are low priority (only executed if the CPU has nothing better to do). EG: background video rendering, crypto mining.\n");
+        System.out.println("System time:     Time spent executing code inside the Linux kernal itself. EG: when reading a file from the disk or sending data over a network socket.\n");
+        System.out.println("Idle Time:       Time the CPU spends doing nothing\n");
+        System.out.println("IO Wait Time:    Time the CPU spends idle specifically because it was waiting for direction (input or output).\n");
+        System.out.println("Irq Time:        Time spent servicing physical hardware interrupts, the CPU stops its current task, moves the incoming instruction to RAM and sends a signal to softirq to process it. EG: keyboard presses or a mouse input.\n");
+        System.out.println("Softirq Time:    Time spent executing the lower priority interrupt tasks set by the irq.\n");
+        System.out.println("Steal Time:      Time a virtual CPU wanted to run but had to wait as another virtual machine was being serviced (only really applies in virutlised environments like AWS EC2 or VMware).\n");
+        System.out.println("Guest Time:      Time spent running a virtual CPU for a guest operating system (Already included in 'Guest Time').\n");
+        System.out.println("Nice Guest Time: Time spent running a virutal CPU for a gest OS with a lower priority (already included in 'Nice Time')\n");
 
 
     }
