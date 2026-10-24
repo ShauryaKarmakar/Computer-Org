@@ -5,34 +5,34 @@
  * the results.
  *
  * Build:  javac *.java
- * Run:    java demo        (run it from the folder that contains the ids folder)
+ * Run:    java Main        (run it from the folder that contains the ids folder)
  */
+
 public class Main
 {
     public static void main(String[] args) throws Exception
     {
-        System.out.println("cores:  " + CPUInfo.getCount());
-        System.out.println("model:  " + CPUInfo.getModel());
-        System.out.println("core 0: busy=" + CPUInfo.getBusy(0) + " idle=" + CPUInfo.getIdle(0));
-        System.out.println("memory: total=" + MemInfo.getTotal() + " KiB, used=" + MemInfo.getUsed() + " KiB");
+        // Calling the display methods to for CPU and Memory information
+        cpuInfo.displayCpu();        
+        memInfo.displayMemory();
 
-        IdLookup pci = IdLookup.pci();
-        System.out.println("PCI devices: " + PCIInfo.getCount());
-        for (int i = 0; i < PCIInfo.getCount(); i++) {
-            int vendor = PCIInfo.getVendorId(i);
-            int device = PCIInfo.getDeviceId(i);
-            System.out.printf("  %s  %04x:%04x  %s %s%n", PCIInfo.getAddress(i), vendor, device,
+        idLookup pci = idLookup.pci();
+        System.out.println("PCI devices: " + pciInfo.getCount());
+        for (int i = 0; i < pciInfo.getCount(); i++) {
+            int vendor = pciInfo.getVendorId(i);
+            int device = pciInfo.getDeviceId(i);
+            System.out.printf("  %s  %04x:%04x  %s %s%n", pciInfo.getAddress(i), vendor, device,
                               pci.vendorName(vendor), pci.deviceName(vendor, device));
         }
 
-        IdLookup usb = IdLookup.usb();
-        System.out.println("USB devices: " + USBInfo.getCount());
-        for (int i = 0; i < USBInfo.getCount(); i++) {
-            int vendor = USBInfo.getVendorId(i);
-            int product = USBInfo.getProductId(i);
-            System.out.printf("  Bus %03d Device %03d: ID %04x:%04x  %s %s%n", USBInfo.getBusNumber(i),
-                              USBInfo.getDeviceNumber(i), vendor, product,
+        idLookup usb = idLookup.usb();
+        System.out.println("USB devices: " + usbInfo.getCount());
+        for (int i = 0; i < usbInfo.getCount(); i++) {
+            int vendor = usbInfo.getVendorId(i);
+            int product = usbInfo.getProductId(i);
+            System.out.printf("  Bus %03d Device %03d: ID %04x:%04x  %s %s%n", usbInfo.getBusNumber(i),
+                              usbInfo.getDeviceNumber(i), vendor, product,
                               usb.vendorName(vendor), usb.deviceName(vendor, product));
-        }
+        } 
     }
 }
