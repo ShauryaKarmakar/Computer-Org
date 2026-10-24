@@ -95,8 +95,24 @@ public class cpuInfo
         System.out.println();
         }
 
-        System.out.println("Average load = " + (Math.round(localLoadT / count * 100.0) / 100.0) + "%");
+        System.out.println("Average CPU load = " + (Math.round(localLoadT / count * 100.0) / 100.0) + "%");
         System.out.println();
+        System.out.println("Explanation of CPU details: ");
+        System.out.println("____________________________");
+        System.out.println();
+        System.out.println("Busy:            Time the CPU spends working on a task (user, nice, system, irq, softirq and steal time combined).");
+        System.out.println("Idle:            Time the CPU spends doing nothing (idle and iowait time combined).");
+        System.out.println("User Time:       Time spent executing standard code in user space. EG: using a web browser.");
+        System.out.println("Nice Time:       Time the CPU spends executing user space processes that are low priority (only executed if the CPU has nothing better to do). EG: background video rendering, crypto mining.");
+        System.out.println("System time:     Time spent executing code inside the Linux kernal itself. EG: when reading a file from the disk or sending data over a network socket.");
+        System.out.println("Idle Time:       Time the CPU spends doing nothing");
+        System.out.println("IO Wait Time:    Time the CPU spends idle specifically because it was waiting for direction (input or output).");
+        System.out.println("Irq Time:        Time spent servicing physical hardware interrupts, the CPU stops its current task, moves the incoming instruction to RAM and sends a signal to softirq to process it. EG: keyboard presses or a mouse input.");
+        System.out.println("Softirq Time:    Time spent executing the lower priority interrupt tasks set by the irq.");
+        System.out.println("Steal Time:      Time a virtual CPU wanted to run but had to wait as another virtual machine was being serviced (only really applies in virutlised environments like AWS EC2 or VMware).");
+        System.out.println("Guest Time:      Time spent running a virtual CPU for a guest operating system (Already included in 'Guest Time').");
+        System.out.println("Nice Guest Time: Time spent running a virutal CPU for a gest OS with a lower priority (already included in 'Nice Time'");
+
 
     }
 
