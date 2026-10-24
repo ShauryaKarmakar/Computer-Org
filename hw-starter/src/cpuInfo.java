@@ -67,6 +67,7 @@ public class cpuInfo
         long totalT = stats[0] + stats[1] + stats[2] + stats[3] + stats[4] + stats[5] + stats[6] + stats[7];
         
         System.out.println("_______________________");
+        System.out.println("Processor clock speed: " + getMHz() + " MHz");
         System.out.println("Busy ticks = " + cpuInfo.getBusy(i) + ", Idle ticks = " + cpuInfo.getIdle(i));
         System.out.println("User time: " + stats[0]); // Time spent with normal processing in user mode.
         System.out.println("Nice time: " + stats[1]); // Time spent with niced processes in user mode.
@@ -90,12 +91,13 @@ public class cpuInfo
 
         System.out.println("This core's load is " + localLoadRound + "%");
         localLoadT += localLoadRound;
-        System.out.println();
+        System.out.println("____________________________");
         }
 
         System.out.println("Average CPU load = " + (Math.round(localLoadT / count * 100.0) / 100.0) + "%\n");
         System.out.println("Explanation of CPU details: \n");
         System.out.println("____________________________\n");
+        System.out.println("Clock speed:     This refers to how many cycles per second the core is doing (1 MHz is a million cycles per second).\n");
         System.out.println("Busy:            Time the CPU spends working on a task (user, nice, system, irq, softirq and steal time combined).\n");
         System.out.println("Idle:            Time the CPU spends doing nothing (idle and iowait time combined).\n");
         System.out.println("User Time:       Time spent executing standard code in user space. EG: using a web browser.\n");
@@ -109,7 +111,7 @@ public class cpuInfo
         System.out.println("Guest Time:      Time spent running a virtual CPU for a guest operating system (Already included in 'Guest Time').\n");
         System.out.println("Nice Guest Time: Time spent running a virutal CPU for a gest OS with a lower priority (already included in 'Nice Time')\n");
 
-
+        System.out.println("__________________________________________________");
     }
 
 
@@ -121,6 +123,11 @@ public class cpuInfo
             if (line.startsWith("processor"))
                 count++;
         return count;
+    }
+
+    // Goes through the cpuinfo file and returns the processor clock speed for each core
+    public static double getMHz() {
+        return Double.parseDouble(getField("cpu MHz"));
     }
 
     /**
