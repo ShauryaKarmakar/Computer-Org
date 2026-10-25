@@ -35,15 +35,21 @@ public class cpuInfo
         ArrayList<Long> idleList = new ArrayList<Long>();
 
         // Printing out the model and number of cores
-        System.out.println("\nThis computer has the " + model + " model.");
-        System.out.println("There are " + count + " cores on this device.\n");
-        if ((siblings / cores) > 1) {
-            System.out.println("This device has hyperthreading. Since it has " + cores + " physical cores yet " + (siblings / cores) + " threads per core (for a total of " + count + "). This means that each core in the CPU runs two threads in parallel, meaning it can work much more efficiently than it would otherwise.");
-            
+        if (cores > 0) {
+            System.out.println("\nComputer model: " + model);
+            System.out.println("There are " + count + " cores on this device.\n");
+
+            if (siblings > cores) {
+                System.out.println("This device has hyperthreading. Since it has " + cores + " physical cores yet " + (siblings / cores) + " threads per core (for a total of " + count + "). This means that each core in the CPU runs two threads in parallel, meaning it can work much more efficiently than it would otherwise.");
+            }
+            else {
+                System.out.println("This device does not have hyperthreading.");
+            }  
         }
         else {
-            System.out.println("This device does not have hyperthreading.");
+            System.out.println("There was an error when collecting CPU data.");
         }
+
         System.out.println();
 
         // First iteration for the cores, busy and idle ticks are stored in a list for future use
@@ -65,10 +71,12 @@ public class cpuInfo
         // Goes through the /proc/stat file and returns various stats for each CPU core
         long[] stats = fields(i);
         long totalT = stats[0] + stats[1] + stats[2] + stats[3] + stats[4] + stats[5] + stats[6] + stats[7];
-        
+        long busy = getBusy(i);
+        long idle = getIdle(i);
+
         System.out.println("_______________________");
         System.out.println("Processor clock speed: " + getMHz() + " MHz");
-        System.out.println("Busy ticks = " + getBusy(i) + ", Idle ticks = " + getIdle(i));
+        System.out.println("Busy ticks = " + busy + ", Idle ticks = " + idle);
         System.out.println("User time: " + stats[0]); // Time spent with normal processing in user mode.
         System.out.println("Nice time: " + stats[1]); // Time spent with niced processes in user mode.
         System.out.println("System time: " + stats[2]); // Time spent running in kernel mode.
@@ -83,8 +91,8 @@ public class cpuInfo
         System.out.println();
 
 
-        long localBusyT = (getBusy(i) - busyList.get(i));  //Minuses the previous iteration's busy value from the current iteration's busy value to get the difference
-        long localIdleT = (getIdle(i) - idleList.get(i));
+        long localBusyT = (busy - busyList.get(i));  //Minuses the previous iteration's busy value from the current iteration's busy value to get the difference
+        long localIdleT = (idle - idleList.get(i));
         double localLoad = ((double) localBusyT / (localBusyT + localIdleT)) * 100; //localBusyT is changed from long to double to save the decimal values
 
         double localLoadRound = Math.round(localLoad * 100.0) / 100.0;
