@@ -14,8 +14,8 @@ public class memInfo
         // Get memory details and set them to variables to reduce the number of times meminfo is read
         long total = getTotal();
         long free = getFree();
-        long used = getUsed(total, free);
         long available = getAvailable();
+        long used = getUsed(total, available);
         long buffers = getBuffers();
         long cached = getCached();
         long swapCached = getSwapCached();

@@ -23,7 +23,7 @@ empty string), so a missing file does not crash program.
 | Class | Methods | Source |
 | --- | --- | --- |
 | `cpuInfo` | `getCount()`, `getModel()`, `getField(name)`, `getBusy(core)`, `getIdle(core)`, `siblings()`,`cores()`, `getMHz()`, `fields(name)` ,`displayCpu()`,  | `/proc/cpuinfo`, `/proc/stat` |
-| `memInfo` | `getTotal()`, `getAvailable()`, `getUsed(total, free)`, `field(name)` (all in KiB), `getFree()`,`getCached()`, `getSwapCached()`, `getActive()`, `getInactive()`, `getPercentage()`, `getBuffers()`, `displayMemory()` | `/proc/meminfo` |
+| `memInfo` | `getTotal()`, `getAvailable()`, `getUsed(total, available)`, `field(name)` (all in KiB), `getFree()`,`getCached()`, `getSwapCached()`, `getActive()`, `getInactive()`, `getPercentage()`, `getBuffers()`, `displayMemory()` | `/proc/meminfo` |
 | `pciInfo` | `getCount()`, `getAddress(i)`, `getBus(i)`, `getDevice(i)`, `getFunction(i)`, `getVendorId(i)`, `getDeviceId(i)`, `getClassCode(i)`, `rescan()` | `/sys/bus/pci/devices` |
 | `usbInfo` | `getCount()`, `getName(i)`, `getVendorId(i)`, `getProductId(i)`, `getManufacturer(i)`, `getProduct(i)`, `getBusNumber(i)`, `getDeviceNumber(i)`, `rescan()` | `/sys/bus/usb/devices` |
 | `idLookup` | `pci()`, `usb()`, `vendorName(id)`, `deviceName(vendor, device)`, `className(classCode)` | `ids/pci.ids`, `ids/usb.ids` |
