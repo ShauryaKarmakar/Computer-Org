@@ -27,8 +27,9 @@ empty string), so a missing file does not crash program.
 | `pciInfo` | `getCount()`, `getAddress(i)`, `getBus(i)`, `getDevice(i)`, `getFunction(i)`, `getVendorId(i)`, `getDeviceId(i)`, `getClassCode(i)`, `rescan()` | `/sys/bus/pci/devices` |
 | `usbInfo` | `getCount()`, `getName(i)`, `getVendorId(i)`, `getProductId(i)`, `getManufacturer(i)`, `getProduct(i)`, `getBusNumber(i)`, `getDeviceNumber(i)`, `rescan()` | `/sys/bus/usb/devices` |
 | `idLookup` | `pci()`, `usb()`, `vendorName(id)`, `deviceName(vendor, device)`, `className(classCode)` | `ids/pci.ids`, `ids/usb.ids` |
-| `sysFile` | internal helper used by the classes above | |
 | `VirtualizationDetective` | `displayVMScore()` | `/proc/cpuinfo`, `/proc/modules`, `cpuInfo`, `memInfo`, `pciInfo`, `usbInfo`, `idLookup`, `ids/pci.ids`, `ids/usb.ids` |
+| `sysFile` | internal helper used by the classes above | |
+
 
 
 ## Sources / websites used
