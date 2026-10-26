@@ -107,8 +107,9 @@ public class usbInfo
     }
 
     /**
-     * Requirement 4: Collects all USB devices into a List of USBDevice objects.
      * Safely returns an empty list if there are no USB devices on the system.
+     * 
+     * (Kyrylo Kuzmenko, 26/10/2026)
      */
     public static List<USBDevice> getDeviceList()
     {

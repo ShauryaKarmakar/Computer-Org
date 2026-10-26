@@ -1,6 +1,9 @@
 /**
  * Represents a single PCI device.
  * Stores hardware identifiers, bus location, class code, and descriptive names.
+ *  
+ * (Kyrylo Kuzmenko, 26/10/2026)
+ * 
  */
 public class PCIDevice {
     // Bus, Device, and Function numbers

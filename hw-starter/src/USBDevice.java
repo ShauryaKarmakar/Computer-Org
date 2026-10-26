@@ -1,7 +1,10 @@
 /**
  * Represents a single USB device.
  * Stores vendor and product IDs, and human-readable names.
+ * 
+ * (Kyrylo Kuzmenko, 26/10/2026)
  */
+
 public class USBDevice {
     private int vendorId;
     private int productId;
@@ -12,7 +15,7 @@ public class USBDevice {
         this.vendorId = vendorId;
         this.productId = productId;
 
-        // Default to raw hex strings if lookup name is not found (Requirement 5)
+        // Default to raw hex strings if lookup name is not found
         this.vendorName = String.format("0x%04x", vendorId);
         this.productName = String.format("0x%04x", productId);
     }
