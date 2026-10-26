@@ -8,15 +8,6 @@ import java.util.List;
 
 /**
  * The PCI devices that Linux has found, read from /sys/bus/pci/devices.
- *
- * Each device has a folder named like "0000:00:02.0", which means domain 0000,
- * bus 00, device 02, function 0. The devices are numbered 0, 1, 2 ... in that
- * order. The list is read once, the first time it is needed; call rescan() to
- * read it again.
- *
- * Vendor and device IDs are numbers (for example 0x8086 is Intel). The class code
- * is 24 bits: base class, sub class and interface. See idLookup to turn these
- * numbers into names.
  */
 public class pciInfo
 {
@@ -41,7 +32,7 @@ public class pciInfo
         return devices;
     }
 
-    /** Read the list of devices again (useful if hardware may have changed). */
+    /** Read the list of devices again. */
     public static void rescan()
     {
         devices = null;
@@ -93,5 +84,25 @@ public class pciInfo
     public static int getClassCode(int index)
     {
         return (int) sysFile.number(list().get(index).resolve("class"));
+    }
+
+    /**
+     * Requirement 3: Collects all PCI devices into a List of PCIDevice objects.
+     */
+    public static List<PCIDevice> getDeviceList()
+    {
+        List<PCIDevice> list = new ArrayList<>();
+        int count = getCount();
+        for (int i = 0; i < count; i++) {
+            int bus = getBus(i);
+            int dev = getDevice(i);
+            int func = getFunction(i);
+            int vendorId = getVendorId(i);
+            int deviceId = getDeviceId(i);
+            int classCode = getClassCode(i);
+
+            list.add(new PCIDevice(bus, dev, func, vendorId, deviceId, classCode));
+        }
+        return list;
     }
 }
