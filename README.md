@@ -4,7 +4,7 @@ This repository contains a Java program that reads information about the compute
 
 ## Build and run from the command line
 
-In the hw_starter folder run:
+From the project root run:
 
     mkdir -p out 
     javac -d out src/*.java
@@ -17,17 +17,24 @@ In the hw_starter folder run:
 
 ## The classes
 
-All methods are `static`. A value that cannot be read comes back as -1 (or an
-empty string), so a missing file does not crash program.
+`CPUInfo`, `MemInfo`, `PCIInfo`, `USBInfo` and `SysFile` are used through `static` methods. A
+value that cannot be read comes back as -1 (or an empty string), so a missing
+file does not crash program.
 
 | Class | Methods | Source |
 | --- | --- | --- |
-| `cpuInfo` | `getCount()`, `getModel()`, `getField(name)`, `getBusy(core)`, `getIdle(core)`, `siblings()`,`cores()`, `getMHz()`, `fields(name)` ,`displayCpu()`,  | `/proc/cpuinfo`, `/proc/stat` |
-| `memInfo` | `getTotal()`, `getAvailable()`, `getUsed(total, available)`, `field(name)` (all in KiB), `getFree()`,`getCached()`, `getSwapCached()`, `getActive()`, `getInactive()`, `getPercentage()`, `getBuffers()`, `displayMemory()` | `/proc/meminfo` |
-| `pciInfo` | `getCount()`, `getAddress(i)`, `getBus(i)`, `getDevice(i)`, `getFunction(i)`, `getVendorId(i)`, `getDeviceId(i)`, `getClassCode(i)`, `rescan()` | `/sys/bus/pci/devices` |
-| `usbInfo` | `getCount()`, `getName(i)`, `getVendorId(i)`, `getProductId(i)`, `getManufacturer(i)`, `getProduct(i)`, `getBusNumber(i)`, `getDeviceNumber(i)`, `rescan()` | `/sys/bus/usb/devices` |
-| `idLookup` | `pci()`, `usb()`, `vendorName(id)`, `deviceName(vendor, device)`, `className(classCode)` | `ids/pci.ids`, `ids/usb.ids` |
-| `sysFile` | internal helper used by the classes above | |
+| `Main` | `main(args)` - builds and prints the report (processor, memory, PCI, USB, analysis and sorting) | uses the classes below; writes files when `html` and/or `csv` is named on the command line |
+| `CPUInfo` (cpuInfo.java) | `getCount()`, `getModel()`, `getField(name)`, `getBusy(core)`, `getIdle(core)` | `/proc/cpuinfo`, `/proc/stat` |
+| `MemInfo` (memInfo.java) | `getTotal()`, `getAvailable()`, `getUsed()`, `field(name)` (all in KiB) | `/proc/meminfo` |
+| `PCIInfo` (pciInfo.java) | `getCount()`, `getAddress(i)`, `getBus(i)`, `getDevice(i)`, `getFunction(i)`, `getVendorId(i)`, `getDeviceId(i)`, `getClassCode(i)`, `rescan()` | `/sys/bus/pci/devices` |
+| `USBInfo` (usbInfo.java) | `getCount()`, `getName(i)`, `getVendorId(i)`, `getProductId(i)`, `getManufacturer(i)`, `getProduct(i)`, `getBusNumber(i)`, `getDeviceNumber(i)`, `rescan()` | `/sys/bus/usb/devices` |
+| `IdLookup` (idLookup.java) | `IdLookup(file)`, `pci()`, `usb()`, `vendorName(id)`, `deviceName(vendor, device)`, `className(classCode)`, `vendorCount()` | `ids/pci.ids`, `ids/usb.ids` |
+| `SysFile` (sysFile.java) | `path(name)`, `lines(file)`, `text(file)`, `number(file)` - internal helper used by the classes above | `/proc`, `/sys` |
+| `PCIDevice` | `PCIDevice(rawAddress, vendorId, deviceId, classCode, vendorName, deviceName)`, `getRawAddress()`, `getVendorId()`, `getDeviceId()`, `getClassCode()`, `getVendorName()`, `getDeviceName()`, `getBus()`, `getDevice()`, `getFunction()`, `toString()` | built by `Main` from `PCIInfo` and `IdLookup` |
+| `USBDevice` | `USBDevice(bus, device, vendorId, productId, vendorName, productName)`, `getBus()`, `getDevice()`, `getVendorId()`, `getProductId()`, `getVendorName()`, `getProductName()`, `toString()` | built by `Main` from `USBInfo` and `IdLookup` |
+| `PCIVendorComparator` | `compare(d1, d2)` - vendor name A-Z, then the address | sorts the `PCIDevice` list |
+| `PCINumericComparator` | `compare(d1, d2)` - bus, then device, then function (the BDF address) | sorts the `PCIDevice` list |
+| `Export` | `html(pci, usb, lookup)`, `csv(pci, usb)` - run as `java -cp out Main html csv` | writes `export/report.html` and `export/devices.csv` |
 
 
 ## Sources / websites used
