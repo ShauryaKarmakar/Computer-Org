@@ -4,7 +4,7 @@ This repository contains a Java program that reads information about the compute
 
 ## Build and run from the command line
 
-In the hw_starter folder run:
+From the project root run:
 
     mkdir -p out 
     javac -d out src/*.java
@@ -17,19 +17,26 @@ In the hw_starter folder run:
 
 ## The classes
 
-All methods are `static`. A value that cannot be read comes back as -1 (or an
-empty string), so a missing file does not crash program.
+`CPUInfo`, `MemInfo`, `PCIInfo`, `USBInfo` and `SysFile` are used through `static` methods. A
+value that cannot be read comes back as -1 (or an empty string), so a missing
+file does not crash program.
 
 | Class | Methods | Source |
 | --- | --- | --- |
-| `cpuInfo` | `getCount()`, `getModel()`, `getField(name)`, `getBusy(core)`, `getIdle(core)`, `siblings()`,`cores()`, `getMHz()`, `fields(name)` ,`displayCpu()`,  | `/proc/cpuinfo`, `/proc/stat` |
-| `memInfo` | `getTotal()`, `getAvailable()`, `getUsed(total, available)`, `field(name)` (all in KiB), `getFree()`,`getCached()`, `getSwapCached()`, `getActive()`, `getInactive()`, `getPercentage()`, `getBuffers()`, `displayMemory()` | `/proc/meminfo` |
-| `pciInfo` | `getCount()`, `getAddress(i)`, `getBus(i)`, `getDevice(i)`, `getFunction(i)`, `getVendorId(i)`, `getDeviceId(i)`, `getClassCode(i)`, `rescan()` | `/sys/bus/pci/devices` |
-| `usbInfo` | `getCount()`, `getName(i)`, `getVendorId(i)`, `getProductId(i)`, `getManufacturer(i)`, `getProduct(i)`, `getBusNumber(i)`, `getDeviceNumber(i)`, `rescan()` | `/sys/bus/usb/devices` |
-| `idLookup` | `pci()`, `usb()`, `vendorName(id)`, `deviceName(vendor, device)`, `className(classCode)` | `ids/pci.ids`, `ids/usb.ids` |
-| `VirtualizationDetective` | `displayVMScore()` | `/proc/cpuinfo`, `/proc/modules`, `cpuInfo`, `memInfo`, `pciInfo`, `usbInfo`, `idLookup`, `ids/pci.ids`, `ids/usb.ids` |
-| `sysFile` | internal helper used by the classes above | |
-
+| `Main` | `main(args)` - builds and prints the report (processor, memory, PCI, USB, analysis and sorting) | uses the classes below; writes files when `html` and/or `csv` is named on the command line |
+| `Hardware` | `cpuModel()`, `coreCount()`, `totalMemory()`, `usedMemory()`, `pciDevices(lookup)`, `usbDevices(lookup)`, `name(fromIdFiles, fallback, id)`, `usingWindows()` | picks the reader for the operating system: `/proc` and `/sys` on Linux, `WindowsInfo` on Windows |
+| `WindowsInfo` | `available()`, `cpuModel()`, `coreCount()`, `totalMemory()`, `availableMemory()`, `usedMemory()`, `pciDevices(lookup)`, `usbDevices(lookup)` | one PowerShell query of the Windows management interface (`Win32_Processor`, `Win32_OperatingSystem`, `Win32_PnPEntity` and each device's location in the registry) |
+| `CPUInfo` (cpuInfo.java) | `getCount()`, `getModel()`, `getField(name)`, `getBusy(core)`, `getIdle(core)` | `/proc/cpuinfo`, `/proc/stat` |
+| `MemInfo` (memInfo.java) | `getTotal()`, `getAvailable()`, `getUsed()`, `field(name)` (all in KiB) | `/proc/meminfo` |
+| `PCIInfo` (pciInfo.java) | `getCount()`, `getAddress(i)`, `getBus(i)`, `getDevice(i)`, `getFunction(i)`, `getVendorId(i)`, `getDeviceId(i)`, `getClassCode(i)`, `rescan()` | `/sys/bus/pci/devices` |
+| `USBInfo` (usbInfo.java) | `getCount()`, `getName(i)`, `getVendorId(i)`, `getProductId(i)`, `getManufacturer(i)`, `getProduct(i)`, `getBusNumber(i)`, `getDeviceNumber(i)`, `rescan()` | `/sys/bus/usb/devices` |
+| `IdLookup` (idLookup.java) | `IdLookup(file)`, `pci()`, `usb()`, `vendorName(id)`, `deviceName(vendor, device)`, `className(classCode)`, `vendorCount()` | `ids/pci.ids`, `ids/usb.ids` |
+| `SysFile` (sysFile.java) | `path(name)`, `lines(file)`, `text(file)`, `number(file)`, `fromCopy()` - internal helper used by the classes above | `/proc`, `/sys` (a copy of them can be pointed at with `-Dhw.root=`) |
+| `PCIDevice` | `PCIDevice(rawAddress, vendorId, deviceId, classCode, vendorName, deviceName)`, `getRawAddress()`, `getVendorId()`, `getDeviceId()`, `getClassCode()`, `getVendorName()`, `getDeviceName()`, `getBus()`, `getDevice()`, `getFunction()`, `toString()` | built by `Hardware` on either platform, names looked up in `IdLookup` |
+| `USBDevice` | `USBDevice(bus, device, vendorId, productId, vendorName, productName)`, `getBus()`, `getDevice()`, `getVendorId()`, `getProductId()`, `getVendorName()`, `getProductName()`, `toString()` | built by `Hardware` on either platform, names looked up in `IdLookup` |
+| `PCIVendorComparator` | `compare(d1, d2)` - vendor name A-Z, then the address | sorts the `PCIDevice` list |
+| `PCINumericComparator` | `compare(d1, d2)` - bus, then device, then function (the BDF address) | sorts the `PCIDevice` list |
+| `Export` | `html(pci, usb, lookup)`, `csv(pci, usb)` - run as `java -cp out Main html csv` | writes `export/report.html` and `export/devices.csv` |
 
 
 ## Sources / websites used
@@ -42,6 +49,3 @@ https://superuser.com/questions/521551/cat-proc-meminfo-what-do-all-those-number
 https://www.idnt.net/en-US/kb/941772#
 <br>
 https://man7.org/linux/man-pages/man5/proc_stat.5.html
-
-### Used for changing the colours in the terminal
-https://www.geeksforgeeks.org/python/print-colors-python-terminal/

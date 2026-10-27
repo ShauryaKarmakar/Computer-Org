@@ -64,8 +64,8 @@ class Export
     static Path html(List<PCIDevice> pci, List<USBDevice> usb, IdLookup lookup) throws IOException
     {
         Map<String, Integer> counts = classCounts(pci, lookup);
-        long totalKiB = MemInfo.getTotal();
-        long usedKiB = MemInfo.getUsed();
+        long totalKiB = Hardware.totalMemory();
+        long usedKiB = Hardware.usedMemory();
         double usage = totalKiB > 0 ? usedKiB * 100.0 / totalKiB : 0.0;
 
         StringBuilder out = new StringBuilder();
@@ -82,8 +82,8 @@ class Export
            .append("</p>\n");
 
         out.append("<section>\n<h2>Machine</h2>\n<table>\n<tbody>\n");
-        out.append(fact("Processor", CPUInfo.getModel()));
-        out.append(fact("Logical cores", String.valueOf(CPUInfo.getCount())));
+        out.append(fact("Processor", Hardware.cpuModel()));
+        out.append(fact("Logical cores", String.valueOf(Hardware.coreCount())));
         out.append(fact("Total memory", String.format("%.2f GiB (%d KiB)", totalKiB / (1024.0 * 1024.0), totalKiB)));
         out.append(fact("Used memory", String.format("%.2f GiB (%.1f%% of total)", usedKiB / (1024.0 * 1024.0), usage)));
         out.append(fact("PCI devices", String.valueOf(pci.size())));
