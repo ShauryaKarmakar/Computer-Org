@@ -17,6 +17,15 @@ class SysFile
      */
     private static final String ROOT = System.getProperty("hw.root", "");
 
+    /**
+     * True when a hw.root folder was given, so the files are read from a copy of
+     * /proc and /sys rather than from the machine the program is running on.
+     */
+    static boolean fromCopy()
+    {
+        return !ROOT.isEmpty();
+    }
+
     /** A path such as "/proc/stat", moved under the hw.root folder if one was given. */
     static Path path(String name)
     {

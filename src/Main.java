@@ -12,15 +12,15 @@ public class Main {
 
         // 1. Processor Report
         System.out.println("--- [1. PROCESSOR REPORT] ---");
-        System.out.println("Model: " + CPUInfo.getModel());
-        int cores = CPUInfo.getCount();
+        System.out.println("Model: " + Hardware.cpuModel());
+        int cores = Hardware.coreCount();
         System.out.println("Cores: " + cores);
         System.out.println();
 
         // 2. Memory Report
         System.out.println("--- [2. MEMORY REPORT] ---");
-        long totalKiB = MemInfo.getTotal();
-        long usedKiB = MemInfo.getUsed();
+        long totalKiB = Hardware.totalMemory();
+        long usedKiB = Hardware.usedMemory();
         double totalGiB = totalKiB / (1024.0 * 1024.0);
         double usedGiB = usedKiB / (1024.0 * 1024.0);
         double usagePercent = totalKiB > 0 ? ((double) usedKiB / totalKiB) * 100.0 : 0.0;
@@ -32,51 +32,11 @@ public class Main {
 
         // 3. PCI Devices
         IdLookup pciLookup = IdLookup.pci();
-        int pciCount = PCIInfo.getCount();
-        List<PCIDevice> pciList = new ArrayList<>();
-
-        for (int i = 0; i < pciCount; i++) {
-            String addr = PCIInfo.getAddress(i);
-            int vendorId = PCIInfo.getVendorId(i);
-            int deviceId = PCIInfo.getDeviceId(i);
-            int classCode = PCIInfo.getClassCode(i);
-
-            String vendorName = pciLookup.vendorName(vendorId);
-            if (vendorName == null) {
-                vendorName = String.format("Vendor 0x%04x", vendorId);
-            }
-
-            String deviceName = pciLookup.deviceName(vendorId, deviceId);
-            if (deviceName == null) {
-                deviceName = String.format("Device 0x%04x", deviceId);
-            }
-
-            pciList.add(new PCIDevice(addr, vendorId, deviceId, classCode, vendorName, deviceName));
-        }
+        List<PCIDevice> pciList = Hardware.pciDevices(pciLookup);
 
         // 4. USB Devices
         IdLookup usbLookup = IdLookup.usb();
-        int usbCount = USBInfo.getCount();
-        List<USBDevice> usbList = new ArrayList<>();
-
-        for (int i = 0; i < usbCount; i++) {
-            int bus = USBInfo.getBusNumber(i);
-            int dev = USBInfo.getDeviceNumber(i);
-            int vendorId = USBInfo.getVendorId(i);
-            int productId = USBInfo.getProductId(i);
-
-            String vendorName = usbLookup.vendorName(vendorId);
-            if (vendorName == null) {
-                vendorName = String.format("Vendor 0x%04x", vendorId);
-            }
-
-            String productName = usbLookup.deviceName(vendorId, productId);
-            if (productName == null) {
-                productName = String.format("Product 0x%04x", productId);
-            }
-
-            usbList.add(new USBDevice(bus, dev, vendorId, productId, vendorName, productName));
-        }
+        List<USBDevice> usbList = Hardware.usbDevices(usbLookup);
 
         System.out.printf("--- [3. PCI DEVICES: %d Found] ---%n", pciList.size());
         System.out.printf("--- [4. USB DEVICES: %d Found] ---%n%n", usbList.size());
