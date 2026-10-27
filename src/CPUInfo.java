@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 
-public class cpuInfo
+public class CPUInfo
 {
     private static final Path CPUINFO = SysFile.path("/proc/cpuinfo");
     private static final Path STAT = SysFile.path("/proc/stat");
@@ -19,9 +19,10 @@ public class cpuInfo
 
     public static void displayCpu() throws InterruptedException { // Method to display the CPU details, InterruptedException is needed for the TimeUnit.SECONDS.sleep() method
 
+        /*
         System.out.println("_______________________________________________________\n");
         System.out.println("Displaying CPU details (no. of cores, model, CPU load)");
-        System.out.println("_______________________________________________________");
+        System.out.println("_______________________________________________________"); */
     
         //Set model type and number of cores to variables to avoid constantly reading the /proc/cpuinfo file
         String model = getModel();
@@ -104,7 +105,7 @@ public class cpuInfo
         System.out.println("____________________________");
         }
 
-        double cpuLoad = (Math.round(localLoadT / count * 100.0) / 100.0)
+        double cpuLoad = (Math.round(localLoadT / count * 100.0) / 100.0);
         System.out.println("Average CPU load = " + cpuLoad + "%\n");
 
         if (cpuLoad > 80) {

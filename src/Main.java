@@ -12,23 +12,14 @@ public class Main {
 
         // 1. Processor Report
         System.out.println("--- [1. PROCESSOR REPORT] ---");
-        System.out.println("Model: " + Hardware.cpuModel());
-        int cores = Hardware.coreCount();
-        System.out.println("Cores: " + cores);
-        System.out.println();
+
+        CPUInfo.displayCpu();
 
         // 2. Memory Report
         System.out.println("--- [2. MEMORY REPORT] ---");
-        long totalKiB = Hardware.totalMemory();
-        long usedKiB = Hardware.usedMemory();
-        double totalGiB = totalKiB / (1024.0 * 1024.0);
-        double usedGiB = usedKiB / (1024.0 * 1024.0);
-        double usagePercent = totalKiB > 0 ? ((double) usedKiB / totalKiB) * 100.0 : 0.0;
 
-        System.out.printf("Total Memory : %.2f GiB (%d KiB)%n", totalGiB, totalKiB);
-        System.out.printf("Used Memory  : %.2f GiB (%d KiB)%n", usedGiB, usedKiB);
-        System.out.printf("Memory Usage : %.1f%%%n", usagePercent);
-        System.out.println();
+        MemInfo.displayMemory();
+
 
         // 3. PCI Devices
         IdLookup pciLookup = IdLookup.pci();
@@ -87,8 +78,6 @@ public class Main {
             System.out.println();
         } else {
             System.out.println("--- [6. DETAILED BREAKDOWN] ---");
-            CPUInfo.displayCpu();
-            MemInfo.displayMemory();
 
             System.out.println("\n--- [7. VIRTUALISATION DETECTION] ---");
             VirtualizationDetective.displayVMScore();
