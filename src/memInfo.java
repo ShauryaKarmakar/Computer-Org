@@ -4,13 +4,13 @@ import java.nio.file.Path;
  * Information about memory, read from /proc/meminfo. All sizes are in KiB
  * (1 KiB = 1024 bytes), which is the unit Linux uses in that file.
  */
-class MemInfo
+public class memInfo
 {
-    private static final Path MEMINFO = SysFile.path("/proc/meminfo"); // Define the path to the /proc/meminfo file for later use
 
-    /** Prints every memory value as a table in KiB, MiB and GiB, then explains each one. */
-    public static void displayMemory()
-    {
+    private static final Path MEMINFO = SysFile.path("/proc/meminfo");  // Define the path to the /proc/meminfo file for later use
+
+    public static void displayMemory() { // Class method to display the memory details in a formatted way
+
         // Get memory details and set them to variables to reduce the number of times meminfo is read
         long total = getTotal();
         long free = getFree();
@@ -21,6 +21,12 @@ class MemInfo
         long swapCached = getSwapCached();
         long active = getActive();
         long inactive = getInactive();
+
+
+        if (total <= 0 || available < 0) {
+            System.out.println("Error: No data. /proc/meminfo could not be read");
+        }
+        else {
 
         // Displaying memory details
         System.out.println("_______________________________________________________\n");
@@ -44,7 +50,18 @@ class MemInfo
         System.out.println();
 
         // Calculate and display the percentage of memory currently in use
-        System.out.println("About " + getPercentage(used, total) + "% of the memory is currently in use.");
+        double percentage = getPercentage(used, total);
+        System.out.println("About " + percentage + "% of the memory is currently in use.");
+        if (percentage >= 80) {
+            System.out.println("Warning: over 80% of your memory is currently in use, try closing some programs or applications.");
+        }
+        else if (percentage >= 50) {
+            System.out.println("Over 50% of your memory is in use, avoid opening too many programs.");
+        }
+        else {
+            System.out.println("Plenty of memory available.");
+        }
+        
 
         // Explanation
         System.out.println("_______________________________________________________\n");
@@ -56,55 +73,87 @@ class MemInfo
         System.out.println("Buffers:    The amount of physical RAM, in kilobytes, used for file buffers.\n");
         System.out.println("Cached:     This is the amount of physical RAM, used as cache memory.\n");
         System.out.println("SwapCached: This is the amount of swap, used as cache memory.\n");
-        System.out.println("Active:     This is the total amount of buffer or page cache memory that is in active use. This memory has been recently used and is usually not reclaimed for other purposes.\n");
-        System.out.println("Inactive:   This is the total amount of buffer or page cache memory that are free and available. This memory has not been recently used and can be reclaimed for other purposes\n");
+        System.out.println("Active:     This is the total amount of buffer or page cache memory that is in active use. This is memory that has been recently used and is usually not reclaimed for other purposes.\n");
+        System.out.println("Inactive:   This is the total amount of buffer or page cache memory that are free and available. This is memory that has not been recently used and can be reclaimed for other purposes\n");
     }
-
-    /** Method for formating the memory details into a table */
-    public static void format(String name, long value)
-    {
+    }
+    
+    // Method for formating the memory details into a table
+    public static void format(String name, long value) {
         double mib = value / (1024.0);
         double gib = value / (1048576.0);
         System.out.printf("%-12s %12s %14s %12s%n", name, value + " KiB", Math.round(mib * 100.0) / 100.0 + " MiB", Math.round(gib * 100.0) / 100.0 + " GiB");
     }
 
-    /** Total installed memory in KiB, or -1 if it cannot be read. */
+
+
+    // Gets total amount of memory in KiB
     public static long getTotal()
     {
         return field("MemTotal");
     }
-
-    /** Memory that is not in use at all in KiB, or -1 if it cannot be read. */
+    
+    // Gets amount of free memory in KiB
     public static long getFree()
     {
         return field("MemFree");
     }
 
-    /** Memory that programs could use right now (free plus easily reclaimed), in KiB. */
+    // Gets amount of cached memory in KiB
+    public static long getCached()
+    {
+        return field("Cached");
+    }
+
+    // Gets amount of swap cached memory in KiB
+    public static long getSwapCached()
+    {
+        return field("SwapCached");    
+    }
+
+    // Gets amount of active memory in KiB
+    public static long getActive()
+    {
+        return field("Active");
+    }
+
+    // Gets amount of inactive memory in KiB
+    public static long getInactive()
+    {
+        return field("Inactive");
+    }
+    
+    // Gets amount of buffer memory in KiB
+    public static long getBuffers()
+    {
+        return field("Buffers");
+    }
+
+    // Calculates the percentage of memory currently being used
+    public static long getPercentage(long used, long total) 
+    {
+        if (used <= 0 || total <= 0) {
+            return -1;
+        }
+        else {
+        return Math.round((used * 100.0) / total);
+        }
+    }
+
+
+    // Memory that programs could use right now (free plus easily reclaimed), in KiB. 
     public static long getAvailable()
     {
         return field("MemAvailable");
     }
 
-    /** Memory in use in KiB: total minus available. */
-    public static long getUsed()
-    {
-        return getUsed(getTotal(), getAvailable());
-    }
-
-    /** Memory in use in KiB, worked out from values that were already read. */
+    // Memory in use in KiB: (total minus available)
     public static long getUsed(long total, long available)
     {
-        return (total < 0 || available < 0) ? -1 : total - available; // Calculates the amount of memory currently in use (returns -1 if total or available is negative)
+        return (total < 0 || available < 0) ? -1 : total - available; // Calculates the amount of memory currently in use(returns -1 if total or available is negative)
     }
 
-    /** The percentage of memory currently being used, or 0 if the total is unreadable. */
-    public static long getPercentage(long used, long total)
-    {
-        return total <= 0 ? 0 : Math.round((used * 100.0) / total);
-    }
-
-    /** The value in KiB of a named line of /proc/meminfo such as "SwapTotal", or -1. */
+    // Goes through the /proc/memInfo file to find (and return) the given field. Returns -1 if it cannot be found
     public static long field(String name)
     {
         for (String line : SysFile.lines(MEMINFO)) {
@@ -118,35 +167,5 @@ class MemInfo
             }
         }
         return -1;
-    }
-
-    /** The amount of memory used as cache in KiB, or -1 if it cannot be read. */
-    public static long getCached()
-    {
-        return field("Cached");
-    }
-
-    /** The amount of swap used as cache in KiB, or -1 if it cannot be read. */
-    public static long getSwapCached()
-    {
-        return field("SwapCached");
-    }
-
-    /** The amount of memory in active use in KiB, or -1 if it cannot be read. */
-    public static long getActive()
-    {
-        return field("Active");
-    }
-
-    /** The amount of memory that can be reclaimed in KiB, or -1 if it cannot be read. */
-    public static long getInactive()
-    {
-        return field("Inactive");
-    }
-
-    /** The amount of memory used for file buffers in KiB, or -1 if it cannot be read. */
-    public static long getBuffers()
-    {
-        return field("Buffers");
     }
 }
