@@ -105,4 +105,34 @@ public class usbInfo
             return -1;
         }
     }
+
+    /**
+     * Safely returns an empty list if there are no USB devices on the system.
+     * 
+     * (Kyrylo Kuzmenko, 26/10/2026)
+     */
+    public static List<USBDevice> getDeviceList()
+    {
+        List<USBDevice> list = new ArrayList<>();
+        int count = getCount();
+        for (int i = 0; i < count; i++) {
+            int vendorId = getVendorId(i);
+            int productId = getProductId(i);
+
+            USBDevice dev = new USBDevice(vendorId, productId);
+
+            // Pre-fill manufacturer and product name if Linux kernel already knows them
+            String mfg = getManufacturer(i);
+            if (mfg != null && !mfg.isEmpty()) {
+                dev.setVendorName(mfg);
+            }
+            String prod = getProduct(i);
+            if (prod != null && !prod.isEmpty()) {
+                dev.setProductName(prod);
+            }
+
+            list.add(dev);
+        }
+        return list;
+    }
 }
