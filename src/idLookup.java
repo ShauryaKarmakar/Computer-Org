@@ -23,7 +23,8 @@ class IdLookup
 {
     private final Map<Integer, String> vendors = new HashMap<>();
     private final Map<Long, String> devices = new HashMap<>();
-    private final Map<Integer, String> classes = new HashMap<>();   // pci.ids only
+    private final Map<Integer, String> baseClasses = new HashMap<>();  // "C 01  Mass storage controller"
+    private final Map<Integer, String> classes = new HashMap<>();      // "\t06  SATA controller", pci.ids only
 
     /** Read a pci.ids or usb.ids file. Throws IOException if it cannot be read. */
     public IdLookup(Path file) throws IOException
@@ -40,7 +41,7 @@ class IdLookup
             if (line.startsWith("C ")) {                       // start of the class section
                 inClasses = true;
                 baseClass = Integer.parseInt(line.substring(2, 4), 16);
-                classes.put(baseClass << 8, line.substring(6).strip());
+                baseClasses.put(baseClass << 8, line.substring(6).strip());
             } else if (inClasses && line.startsWith("\t") && !line.startsWith("\t\t")) {
                 // a sub class line such as "\t00  Host bridge"
                 if (baseClass >= 0 && line.length() > 5 && isHex(line, 1, 3))
@@ -103,7 +104,9 @@ class IdLookup
     public String className(int classCode)
     {
         String sub = classes.get(classCode >> 8);
-        return sub != null ? sub : classes.get(classCode >> 16 << 8);
+        if (sub != null)
+            return sub;
+        return baseClasses.get(classCode >> 16 << 8);
     }
 
     /** How many vendors were read. */

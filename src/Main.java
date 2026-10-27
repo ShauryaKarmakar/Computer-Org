@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -115,6 +116,26 @@ public class Main {
 
         for (Map.Entry<String, Integer> entry : classCounts.entrySet()) {
             System.out.printf("  %-25s : %d device(s)%n", entry.getKey(), entry.getValue());
+        }
+
+        // 6. The same report as files, if any format was named on the command line
+        if (args.length > 0) {
+            System.out.println("\n--- [6. FILE EXPORT] ---");
+
+            for (String format : args) {
+                String name = format.strip().toLowerCase();
+
+                try {
+                    if (name.equals("html"))
+                        System.out.println("Wrote " + Export.html(pciList, usbList, pciLookup));
+                    else if (name.equals("csv"))
+                        System.out.println("Wrote " + Export.csv(pciList, usbList));
+                    else
+                        System.out.println("Nothing to do for \"" + format + "\"; use html or csv.");
+                } catch (IOException e) {
+                    System.out.println("Could not write the " + name + " file: " + e.getMessage());
+                }
+            }
         }
 
         System.out.println("\n=================================================");
