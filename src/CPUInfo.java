@@ -106,7 +106,7 @@ public class CPUInfo
         }
 
         double cpuLoad = (Math.round(localLoadT / count * 100.0) / 100.0);
-        System.out.println("Average CPU load = " + cpuLoad + "%\n");
+        System.out.println("\nAverage CPU load = " + cpuLoad + "%\n");
 
         if (cpuLoad > 80) {
             System.out.println("Warning: High CPU load, if you are not currently running an intensive program, I reccommend closing unused applications and programs or power down your PC.");
@@ -135,8 +135,8 @@ public class CPUInfo
         System.out.println("Softirq Time:    Time spent executing the lower priority interrupt tasks set by the irq.\n");
         System.out.println("Steal Time:      Time a virtual CPU wanted to run but had to wait as another virtual machine was being serviced (only really applies in virutlised environments like AWS EC2 or VMware).\n");
         System.out.println("Guest Time:      Time spent running a virtual CPU for a guest operating system (Already included in 'Guest Time').\n");
-        System.out.println("Nice Guest Time: Time spent running a virutal CPU for a gest OS with a lower priority (already included in 'Nice Time')\n");
-        System.out.println("_______________________________________________________");
+        System.out.println("Nice Guest Time: Time spent running a virutal CPU for a gest OS with a lower priority (already included in 'Nice Time')");
+        System.out.println("_______________________________________________________\n");
     }
 }
 

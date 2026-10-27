@@ -35,7 +35,7 @@ public class MemInfo
         System.out.println("_______________________________________________________\n"); */
 
         // Format data into a table
-        System.out.printf("%8s %12s %15s %13s%n", "Name", "KiB", "MiB", "GiB");
+        System.out.printf("\n%8s %12s %15s %13s%n", "Name", "KiB", "MiB", "GiB");
         System.out.println("_______________________________________________________\n");
 
         // Format and display each memory detail
@@ -76,6 +76,7 @@ public class MemInfo
         System.out.println("SwapCached: This is the amount of swap, used as cache memory.\n");
         System.out.println("Active:     This is the total amount of buffer or page cache memory that is in active use. This is memory that has been recently used and is usually not reclaimed for other purposes.\n");
         System.out.println("Inactive:   This is the total amount of buffer or page cache memory that are free and available. This is memory that has not been recently used and can be reclaimed for other purposes\n");
+        System.out.println("_______________________________________________________\n");
     }
     }
     

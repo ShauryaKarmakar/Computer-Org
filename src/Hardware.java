@@ -53,7 +53,7 @@ class Hardware
     /** Memory in use in KiB, or -1 if it cannot be read. */
     static long usedMemory()
     {
-        return WINDOWS ? WindowsInfo.usedMemory() : MemInfo.getUsed();
+        return WINDOWS ? WindowsInfo.usedMemory() : MemInfo.getUsed(MemInfo.getTotal(), MemInfo.getAvailable());
     }
 
     /** The PCI devices, with vendor and device names looked up in pci.ids. */
