@@ -23,6 +23,15 @@ class Hardware
     {
     }
 
+    /**
+     * True when the readings come from Windows instead of from /proc and /sys, so
+     * that the parts which read those files directly can be left out.
+     */
+    static boolean usingWindows()
+    {
+        return WINDOWS;
+    }
+
     /** The processor model, for example "Intel(R) Core(TM) i7-9700K CPU @ 3.60GHz". */
     static String cpuModel()
     {
