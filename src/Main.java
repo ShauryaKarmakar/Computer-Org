@@ -118,18 +118,9 @@ public class Main {
             System.out.printf("  %-25s : %d device(s)%n", entry.getKey(), entry.getValue());
         }
 
-        // 6. Detailed processor and memory breakdown, carried over from the hw-starter copy
-        System.out.println("--- [6. DETAILED BREAKDOWN] ---");
-        CPUInfo.displayCpu();
-        MemInfo.displayMemory();
-
-        // 7. Is this machine virtual?
-        System.out.println("\n--- [7. VIRTUALISATION DETECTION] ---");
-        VirtualizationDetective.displayVMScore();
-
-        // 8. The same report as files, if any format was named on the command line
+        // 6. The same report as files, if any format was named on the command line
         if (args.length > 0) {
-            System.out.println("\n--- [8. FILE EXPORT] ---");
+            System.out.println("\n--- [6. FILE EXPORT] ---");
 
             for (String format : args) {
                 String name = format.strip().toLowerCase();
