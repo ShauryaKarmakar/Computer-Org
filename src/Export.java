@@ -86,6 +86,16 @@ class Export
         out.append(fact("Logical cores", String.valueOf(Hardware.coreCount())));
         out.append(fact("Total memory", String.format("%.2f GiB (%d KiB)", totalKiB / (1024.0 * 1024.0), totalKiB)));
         out.append(fact("Used memory", String.format("%.2f GiB (%.1f%% of total)", usedKiB / (1024.0 * 1024.0), usage)));
+
+        out.append(fact("Free memory", MemInfo.getFree() + "KiB"));
+        out.append(fact("Available memory", MemInfo.getAvailable() + "KiB"));
+        out.append(fact("Cached memory", MemInfo.getCached() + "KiB"));
+        out.append(fact("SwapCached memory", MemInfo.getSwapCached() + "KiB"));
+        out.append(fact("Active memory", MemInfo.getActive() + "KiB"));
+        out.append(fact("Inactive memory", MemInfo.getInactive() + "KiB"));
+        out.append(fact("Buffer memory", MemInfo.getBuffers() + "KiB"));
+
+
         out.append(fact("PCI devices", String.valueOf(pci.size())));
         out.append(fact("USB devices", String.valueOf(usb.size())));
         out.append("</tbody>\n</table>\n</section>\n");
