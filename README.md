@@ -49,3 +49,7 @@ https://superuser.com/questions/521551/cat-proc-meminfo-what-do-all-those-number
 https://www.idnt.net/en-US/kb/941772#
 <br>
 https://man7.org/linux/man-pages/man5/proc_stat.5.html
+
+### Making a pie chart
+
+https://css-tricks.com/trying-to-make-the-perfect-pie-chart-in-css/

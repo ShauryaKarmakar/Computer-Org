@@ -66,7 +66,17 @@ class Export
         Map<String, Integer> counts = classCounts(pci, lookup);
         long totalKiB = Hardware.totalMemory();
         long usedKiB = Hardware.usedMemory();
-        double usage = totalKiB > 0 ? usedKiB * 100.0 / totalKiB : 0.0;
+        double usage = totalKiB > 0 && usedKiB >= 0
+                ? Math.max(0.0, Math.min(100.0, usedKiB * 100.0 / totalKiB))
+                : 0.0;
+
+        double free = MemInfo.getFree() / 1048576.0; 
+        double available = MemInfo.getAvailable() / 1048576.0; 
+        double cached = MemInfo.getCached() / 1048576.0; 
+        double swapCached = MemInfo.getSwapCached() / 1048576.0; 
+        double active = MemInfo.getActive() / 1048576.0; 
+        double inActive = MemInfo.getInactive() / 1048576.0; 
+        double buffers = MemInfo.getBuffers() / 1048576.0; 
 
         StringBuilder out = new StringBuilder();
         out.append("<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n");
@@ -87,18 +97,39 @@ class Export
         out.append(fact("Total memory", String.format("%.2f GiB (%d KiB)", totalKiB / (1024.0 * 1024.0), totalKiB)));
         out.append(fact("Used memory", String.format("%.2f GiB (%.1f%% of total)", usedKiB / (1024.0 * 1024.0), usage)));
 
-        out.append(fact("Free memory", MemInfo.getFree() + "KiB"));
-        out.append(fact("Available memory", MemInfo.getAvailable() + "KiB"));
-        out.append(fact("Cached memory", MemInfo.getCached() + "KiB"));
-        out.append(fact("SwapCached memory", MemInfo.getSwapCached() + "KiB"));
-        out.append(fact("Active memory", MemInfo.getActive() + "KiB"));
-        out.append(fact("Inactive memory", MemInfo.getInactive() + "KiB"));
-        out.append(fact("Buffer memory", MemInfo.getBuffers() + "KiB"));
+
+        out.append(fact("Free memory", Math.round(free * 100.0) / 100.0 + "GiB"));
+        out.append(fact("Available memory", Math.round(available * 100.0) / 100.0 + "GiB"));
+        out.append(fact("Cached memory", Math.round(cached * 100.0) / 100.0 + "GiB"));
+        out.append(fact("SwapCached memory", Math.round(swapCached * 100.0) / 100.0 + "GiB"));
+        out.append(fact("Active memory", Math.round(active * 100.0) / 100.0   + "GiB"));
+        out.append(fact("Inactive memory", Math.round(inActive * 100.0) / 100.0 + "GiB"));
+        out.append(fact("Buffer memory", Math.round(buffers * 100.0) / 100.0 + "GiB"));
+
+
 
 
         out.append(fact("PCI devices", String.valueOf(pci.size())));
         out.append(fact("USB devices", String.valueOf(usb.size())));
         out.append("</tbody>\n</table>\n</section>\n");
+
+        out.append("<section>");
+        out.append("<h2>Memory usage</h2>");
+        out.append("<div style=\"width:160px;height:160px;border-radius:50%;");
+        out.append("background:conic-gradient(#4a7fb5 0% ");
+        out.append(usage);
+        out.append("%, #ff0606 ");
+        out.append(usage);
+        out.append("% 100%);\" role=\"img\" aria-label=\"Memory used: ");
+        out.append(String.format("%.1f%%", usage));
+        out.append("\"></div>\n");
+        out.append("<p>Used: ").append(String.format("%.1f%%", usage));
+        out.append(" &middot; Available: ").append(String.format("%.1f%%", 100.0 - usage));
+        out.append("</p>\n</section>\n");
+
+
+
+
 
         out.append("<section>\n<h2>PCI devices (").append(pci.size()).append(")</h2>\n");
         out.append("<table>\n<thead>\n<tr><th>Address</th><th>Vendor</th><th>Device</th>")

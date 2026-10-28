@@ -44,7 +44,7 @@ public class CPUInfo
             System.out.println("There are " + count + " processors on this device.\n");
 
             if (siblings > cores) {
-                System.out.println("This device has hyperthreading. Since it has " + cores + " physical processors and " + (siblings / cores) + " threads per core (for a total of " + count + "). This means that each core in the CPU runs two threads in parallel, meaning it can work much more efficiently than it would otherwise.");
+                System.out.println("This device has hyperthreading. Since it has " + cores + " physical cores and " + (siblings / cores) + " threads per core (for a total of " + count + "). This means that each core in the CPU runs two threads in parallel, meaning it can work much more efficiently than it would otherwise.");
             }
             else {
                 System.out.println("This device does not have hyperthreading.");
@@ -139,7 +139,12 @@ public class CPUInfo
         System.out.println("_______________________________________________________\n");
     }
 }
+/*
+    public static long getBusyTotal(List<long> busyList) {
 
+        return 1;
+
+    }*/
 
     // Goes through the cpuInfo file and adds one to the count variable for each line that starts with processor that it finds, it calculates the number of cores (logical processors on the computer)
     public static int getCount()
