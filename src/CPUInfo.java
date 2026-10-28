@@ -41,10 +41,10 @@ public class CPUInfo
         }
         else {
             System.out.println("\nComputer model: " + model);
-            System.out.println("There are " + count + " cores on this device.\n");
+            System.out.println("There are " + count + " processors on this device.\n");
 
             if (siblings > cores) {
-                System.out.println("This device has hyperthreading. Since it has " + cores + " physical cores yet " + (siblings / cores) + " threads per core (for a total of " + count + "). This means that each core in the CPU runs two threads in parallel, meaning it can work much more efficiently than it would otherwise.");
+                System.out.println("This device has hyperthreading. Since it has " + cores + " physical processors and " + (siblings / cores) + " threads per core (for a total of " + count + "). This means that each core in the CPU runs two threads in parallel, meaning it can work much more efficiently than it would otherwise.");
             }
             else {
                 System.out.println("This device does not have hyperthreading.");
@@ -69,7 +69,7 @@ public class CPUInfo
 
         // Second iteration for the cores, each core is printed out alongside its busy / idle ticks and its average load
         for (int i = 0; i < count; i++) {
-        System.out.println("\nCore " + i + " Stats: "); 
+        System.out.println("\nProcessor " + i + " Stats: "); 
         
         // Goes through the /proc/stat file and returns various stats for each CPU core
         long[] stats = fields(i);
