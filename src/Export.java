@@ -59,6 +59,14 @@ class Export
         long usedKiB = Hardware.usedMemory();
         double usage = totalKiB > 0 ? usedKiB * 100.0 / totalKiB : 0.0;
 
+        double free = MemInfo.getFree() / 1048576.0; 
+        double available = MemInfo.getAvailable() / 1048576.0; 
+        double cached = MemInfo.getCached() / 1048576.0; 
+        double swapCached = MemInfo.getSwapCached() / 1048576.0; 
+        double active = MemInfo.getActive() / 1048576.0; 
+        double inActive = MemInfo.getInactive() / 1048576.0; 
+        double buffers = MemInfo.getBuffers() / 1048576.0; 
+
         StringBuilder out = new StringBuilder();
         // the page is built as one big string, we keep adding bits on the end of it and write it out
         // in one go at the bottom. the top part is the doctype, then charset so names with accents
