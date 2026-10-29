@@ -11,6 +11,12 @@ import java.util.concurrent.TimeUnit;
  */
 class CPUInfo
 {
+
+    private static final String RESET  = "\u001B[0m";
+    private static final String CYAN   = "\u001B[36m";
+    private static final String BOLD   = "\u001B[1m";
+
+
     private static final Path CPUINFO = SysFile.path("/proc/cpuinfo");
     private static final Path STAT = SysFile.path("/proc/stat");
 
@@ -24,9 +30,8 @@ class CPUInfo
         // this is the cpu half of the detailed report. busy and idle in /proc/stat are totals since the
         // computer booted, so reading them once tells you nothing on its own, thats why it reads them,
         // waits a second, and reads them again to get the difference
-        System.out.println("_______________________________________________________\n");
-        System.out.println("Displaying CPU details (no. of cores, model, CPU load)");
-        System.out.println("_______________________________________________________");
+        System.out.println(CYAN + BOLD +"-----------------------------------------------------------------"+ RESET);
+        printSubSection("Displaying CPU details (no. of cores, model, CPU load)");
 
         // Set model type and number of cores to variables to avoid constantly reading the /proc/cpuinfo file
         String model = getModel();
@@ -114,8 +119,7 @@ class CPUInfo
         // average is all the core loads added together then divided by the amount of cores
         System.out.println("Average CPU load = " + (Math.round(localLoadT / count * 100.0) / 100.0) + "%\n");
         // the explanation at the end, whoever reads the report probably dont know what steal time means
-        System.out.println("Explanation of CPU details: \n");
-        System.out.println("____________________________\n");
+        printSubSection("Explanation of CPU details:");
         System.out.println("Clock speed:     This refers to how many cycles per second the core is doing (1 MHz is a million cycles per second).\n");
         System.out.println("Busy:            Time the CPU spends working on a task (user, nice, system, irq, softirq and steal time combined).\n");
         System.out.println("Idle:            Time the CPU spends doing nothing (idle and iowait time combined).\n");
@@ -128,8 +132,7 @@ class CPUInfo
         System.out.println("Softirq Time:    Time spent executing the lower priority interrupt tasks set by the irq.\n");
         System.out.println("Steal Time:      Time a virtual CPU wanted to run but had to wait as another virtual machine was being serviced (only really applies in virutlised environments like AWS EC2 or VMware).\n");
         System.out.println("Guest Time:      Time spent running a virtual CPU for a guest operating system (Already included in 'Guest Time').\n");
-        System.out.println("Nice Guest Time: Time spent running a virutal CPU for a gest OS with a lower priority (already included in 'Nice Time')\n");
-        System.out.println("_______________________________________________________");
+        printSubSection("Nice Guest Time: Time spent running a virutal CPU for a gest OS with a lower priority (already included in 'Nice Time')\n");
     }
 
     /**
@@ -208,7 +211,7 @@ class CPUInfo
      * The numbers from the "cpuN" line of /proc/stat, or null if there is no such core.
      * Fetches data from the /proc/stat file.
      */
-    private static long[] fields(int core)
+    public static long[] fields(int core)
     {
         String prefix = "cpu" + core + " ";
         for (String line : SysFile.lines(STAT)) {
@@ -221,5 +224,10 @@ class CPUInfo
             }
         }
         return null;
+    }
+        private static void printSubSection(String title) {
+        System.out.println();
+        System.out.println(title);
+        System.out.println(CYAN + BOLD +"-----------------------------------------------------------------"+ RESET);
     }
 }

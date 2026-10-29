@@ -3,43 +3,59 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
 public class Main {
+    private static final String RESET  = "\u001B[0m";
+    private static final String CYAN   = "\u001B[36m";
+    private static final String BOLD   = "\u001B[1m";
+    private static final String YELLOW = "\u001B[33m";
+    private static final String GREEN = "\u001B[32m";
     public static void main(String[] args) throws Exception {
-        System.out.println("=================================================");
-        System.out.println("   CS4421 System Hardware & Topology Reporter    ");
-        System.out.println("=================================================\n");
+        System.out.println();
+        System.out.println();
+        System.out.println(YELLOW + BOLD + "=================================================================");
+        System.out.println(YELLOW + BOLD + "            CS4421 System Hardware & Topology Reporter              ");
+        System.out.println(YELLOW + BOLD + "=================================================================\n" + RESET);
 
         // 1. Processor Report
-        System.out.println("--- [1. PROCESSOR REPORT] ---");
-        System.out.println("Model: " + Hardware.cpuModel());
-        int cores = Hardware.coreCount();
-        System.out.println("Cores: " + cores);
-        System.out.println();
+        printSection(GREEN + "1. PROCESSOR REPORT"+ RESET);
+        CPUInfo cpu = new CPUInfo();
+        cpu.displayCpu();
 
         // 2. Memory Report
-        System.out.println("--- [2. MEMORY REPORT] ---");
+        printSection(GREEN + "2. MEMORY REPORT"+ RESET);
         long totalKiB = Hardware.totalMemory();
         long usedKiB = Hardware.usedMemory();
         double totalGiB = totalKiB / (1024.0 * 1024.0);
         double usedGiB = usedKiB / (1024.0 * 1024.0);
         double usagePercent = totalKiB > 0 ? ((double) usedKiB / totalKiB) * 100.0 : 0.0;
 
-        System.out.printf("Total Memory : %.2f GiB (%d KiB)%n", totalGiB, totalKiB);
-        System.out.printf("Used Memory  : %.2f GiB (%d KiB)%n", usedGiB, usedKiB);
-        System.out.printf("Memory Usage : %.1f%%%n", usagePercent);
+        System.out.printf("%-15s %.2f GiB (%d KiB)%n", "Total Memory:", totalGiB, totalKiB);
+        System.out.printf("%-15s %.2f GiB (%d KiB)%n", "Used Memory:", usedGiB, usedKiB);
+        System.out.printf("%-15s %.1f%%%n", "Memory Usage:", usagePercent);
         System.out.println();
 
         // 3. PCI Devices
+        printSection(GREEN +"3. PCI DEVICES"+ RESET);
         IdLookup pciLookup = IdLookup.pci();
         List<PCIDevice> pciList = Hardware.pciDevices(pciLookup);
+        System.out.println();
+        System.out.printf("%-32s %d%n", "Devices Found:", pciList.size());
+        System.out.println();
+        System.out.printf("%-4s %-4s %-3s %-8s %-8s %-28s %s%n",
+                "Bus", "Dev", "Fn", "Vendor", "Device", "Class", "Name");
+        System.out.println("-----------------------------------------------------------------");
+        for (PCIDevice dev : pciList) {
+            System.out.printf("%02x   %02x   %-3x 0x%04x   0x%04x   %-28s %s: %s%n",
+            dev.getBus(), dev.getDevice(), dev.getFunction(),dev.getVendorId(), dev.getDeviceId(),className(pciLookup, dev.getClassCode()),dev.getVendorName(), dev.getDeviceName());
+        }
 
         // 4. USB Devices
         IdLookup usbLookup = IdLookup.usb();
         List<USBDevice> usbList = Hardware.usbDevices(usbLookup);
-
-        System.out.printf("--- [3. PCI DEVICES: %d Found] ---%n", pciList.size());
-        System.out.printf("--- [4. USB DEVICES: %d Found] ---%n%n", usbList.size());
+        printSection(GREEN +"4. USB DEVICES"+ RESET);
+        System.out.printf("%-32s %d%n%n", "Devices Found:", usbList.size());
 
         if (usbList.isEmpty()) {
             System.out.println("No USB devices detected (VM or cloud server environment).");
@@ -51,52 +67,56 @@ public class Main {
         System.out.println();
 
         // 5. Analysis & Sorting
-        System.out.println("--- [5. PCI ANALYSIS & SORTING] ---");
+        printSection(GREEN +"5. PCI ANALYSIS & SORTING"+ RESET);
 
-        System.out.println("\n>>> PCI Devices Sorted Alphabetically by Vendor Name:");
+        printSubSection("PCI Devices Sorted Alphabetically by Vendor Name");
         List<PCIDevice> vendorSorted = new ArrayList<>(pciList);
         vendorSorted.sort(new PCIVendorComparator());
-        for (PCIDevice dev : vendorSorted) {
-            System.out.println(dev);
-        }
+        System.out.printf("%-35s %s%n", "Vendor", "Device");
+        System.out.println("-----------------------------------------------------------------");
 
-        System.out.println("\n>>> PCI Devices Sorted Numerically by BDF Address:");
+        for (PCIDevice dev : vendorSorted) {
+            System.out.printf("%-35s %s%n",
+                    dev.getVendorName(),
+                    dev.getDeviceName());
+        }
+        System.out.println();
+
+        printSubSection("PCI Devices Sorted Numerically by BDF Address");
+
+        System.out.printf("%-35s %s%n", "BDF Address", "Device");
+        System.out.println("-----------------------------------------------------------------");
+
         List<PCIDevice> bdfSorted = new ArrayList<>(pciList);
         bdfSorted.sort(new PCINumericComparator());
         for (PCIDevice dev : bdfSorted) {
-            System.out.println(dev);
+            System.out.printf("%-35s %s: %s%n",
+                    dev.getRawAddress(),
+                    dev.getVendorName(),
+                    dev.getDeviceName());
         }
+        System.out.println();
 
-        System.out.println("\n>>> Summary: Device Count per PCI Class:");
+        printSubSection("Device Count per PCI Class");
         Map<String, Integer> classCounts = new TreeMap<>();
         for (PCIDevice dev : pciList) {
-            String className = String.format("Class 0x%06x", dev.getClassCode());
+            String className = className(pciLookup, dev.getClassCode());
             classCounts.put(className, classCounts.getOrDefault(className, 0) + 1);
         }
+        System.out.println();
 
         for (Map.Entry<String, Integer> entry : classCounts.entrySet()) {
             System.out.printf("  %-25s : %d device(s)%n", entry.getKey(), entry.getValue());
         }
 
-        // 6. Detailed processor and memory breakdown and 7. the virtualisation check.
-        // Both read /proc and /sys directly, so they only run when those files are what the
-        // readings come from (Linux, or a copy of them given with -Dhw.root).
-        if (Hardware.usingWindows()) {
-            System.out.println("--- [6-7. DETAILED BREAKDOWN] ---");
-            System.out.println("Skipped: the per core breakdown and the virtualisation check read /proc and /sys.");
-            System.out.println();
-        } else {
-            System.out.println("--- [6. DETAILED BREAKDOWN] ---");
-            CPUInfo.displayCpu();
-            MemInfo.displayMemory();
 
-            System.out.println("\n--- [7. VIRTUALISATION DETECTION] ---");
-            VirtualizationDetective.displayVMScore();
-        }
+        //6. Virtualisation Detection
+        printSection(GREEN +"6. VIRTUALIZATION DETECTION REPORT"+ RESET);
+        VirtualizationDetective.displayVMScore();
 
-        // 8. The same report as files, if any format was named on the command line
+        // 7. The same report as files, if any format was named on the command line
         if (args.length > 0) {
-            System.out.println("\n--- [8. FILE EXPORT] ---");
+            printSection(GREEN +"7. FILE EXPORT"+ RESET);
 
             for (String format : args) {
                 String name = format.strip().toLowerCase();
@@ -114,8 +134,28 @@ public class Main {
             }
         }
 
-        System.out.println("\n=================================================");
-        System.out.println("               Report Complete                   ");
-        System.out.println("=================================================");
+        System.out.println(YELLOW + BOLD +"\n=================================================================");
+        System.out.println(YELLOW + BOLD +"               Report Complete                   ");
+        System.out.println(YELLOW + BOLD +"================================================================="+ RESET);
     }
+
+    private static void printSection(String title) {
+        System.out.println();
+        System.out.println(YELLOW + BOLD +"=================================================================");
+        System.out.println(title);
+        System.out.println(YELLOW + BOLD +"================================================================="+ RESET);
+}
+
+    private static void printSubSection(String title) {
+        System.out.println();
+        System.out.println(CYAN + BOLD +"-----------------------------------------------------------------");
+        System.out.println(title);
+        System.out.println(CYAN + BOLD +"-----------------------------------------------------------------"+ RESET);
+    }
+
+    private static String className(IdLookup lookup, int classCode) {
+        String name = lookup.className(classCode);
+        return name != null ? name : String.format("0x%06x", classCode);
+    }
+
 }
