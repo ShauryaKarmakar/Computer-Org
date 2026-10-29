@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
 public class Main {
     private static final String RESET  = "\u001B[0m";
@@ -11,8 +12,6 @@ public class Main {
     private static final String YELLOW = "\u001B[33m";
     private static final String GREEN = "\u001B[32m";
     public static void main(String[] args) throws Exception {
-
-
         System.out.println();
         System.out.println();
         System.out.println(YELLOW + BOLD + "=================================================================");
@@ -21,13 +20,8 @@ public class Main {
 
         // 1. Processor Report
         printSection(GREEN + "1. PROCESSOR REPORT"+ RESET);
-        System.out.printf("%-15s %s%n","Model:" , Hardware.cpuModel());
-        int cores = Hardware.coreCount();
-        System.out.printf("%-15s %d%n","Cores:" , cores);
-        System.out.println();
-        printCpuLoad();
-        System.out.println();
-
+        CPUInfo cpu = new CPUInfo();
+        cpu.displayCpu();
 
         // 2. Memory Report
         printSection(GREEN + "2. MEMORY REPORT"+ RESET);
@@ -164,40 +158,4 @@ public class Main {
         return name != null ? name : String.format("0x%06x", classCode);
     }
 
-    private static void printCpuLoad() throws InterruptedException {
-
-    if (Hardware.usingWindows()) {
-        System.out.println("CPU load information is unavailable on Windows.");
-        return;
-    }
-
-    int cores = CPUInfo.getCount();
-    if (cores <= 0) {
-        System.out.println("Unable to read CPU load.");
-        return;
-    }
-    long[] startBusy = new long[cores];
-    long[] startIdle = new long[cores];
-    // Take initial reading
-    for (int i = 0; i < cores; i++) {
-        startBusy[i] = CPUInfo.getBusy(i);
-        startIdle[i] = CPUInfo.getIdle(i);
-    }
-    // Wait for a second to get a second reading
-    Thread.sleep(1000);
-    double totalLoad = 0;
-    // Take a second reading and work out the load
-    for (int i = 0; i < cores; i++) {
-        long busyTime = CPUInfo.getBusy(i) - startBusy[i];
-        long idleTime = CPUInfo.getIdle(i) - startIdle[i];
-        double loadPercent = 0;
-        if (busyTime + idleTime > 0) {
-            loadPercent = (busyTime * 100.0) / (busyTime + idleTime);
-        }
-        System.out.printf("Core %d: %.2f%%%n", i, loadPercent);
-        totalLoad += loadPercent;
-    }
-
-    System.out.printf("Average CPU Load: %.2f%%%n", totalLoad / cores);
-}
 }
