@@ -36,3 +36,6 @@ bin/
 ### Compiled Java class files ###
 # Made sure that .class files don't get uploaded to our Github Repo as well (Kyrylo, 19/10/2026)
 *.class
+
+### Exported reports ###
+export/

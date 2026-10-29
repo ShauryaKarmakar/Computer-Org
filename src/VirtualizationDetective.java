@@ -1,3 +1,14 @@
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * Looks for evidence that the machine is a virtual machine and prints how
+ * confident the program is about it. Ported from the hw-starter copy of the
+ * project; the helper classes it calls now carry the report program's names
+ * (SysFile, CPUInfo, PCIInfo, USBInfo, IdLookup, MemInfo).
+ */
 public class VirtualizationDetective {
     public static void displayVMScore() {
         final String RED = "\u001B[31m";

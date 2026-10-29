@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +22,8 @@ public class Main {
 
         // 1. Processor Report
         System.out.println("--- [1. PROCESSOR REPORT] ---");
-        System.out.println("Model: " + CPUInfo.getModel());
-        int cores = CPUInfo.getCount();
+        System.out.println("Model: " + Hardware.cpuModel());
+        int cores = Hardware.coreCount();
         System.out.println("Cores: " + cores);
         printSection(GREEN + "1. PROCESSOR REPORT"+ RESET);
         System.out.printf("%-15s %s%n","Model:" , Hardware.cpuModel());
@@ -48,27 +49,7 @@ public class Main {
 
         // 3. PCI Devices
         IdLookup pciLookup = IdLookup.pci();
-        int pciCount = PCIInfo.getCount();
-        List<PCIDevice> pciList = new ArrayList<>();
-
-        for (int i = 0; i < pciCount; i++) {
-            String addr = PCIInfo.getAddress(i);
-            int vendorId = PCIInfo.getVendorId(i);
-            int deviceId = PCIInfo.getDeviceId(i);
-            int classCode = PCIInfo.getClassCode(i);
-
-            String vendorName = pciLookup.vendorName(vendorId);
-            if (vendorName == null) {
-                vendorName = String.format("Vendor 0x%04x", vendorId);
-            }
-
-            String deviceName = pciLookup.deviceName(vendorId, deviceId);
-            if (deviceName == null) {
-                deviceName = String.format("Device 0x%04x", deviceId);
-            }
-
-            pciList.add(new PCIDevice(addr, vendorId, deviceId, classCode, vendorName, deviceName));
-        }
+        List<PCIDevice> pciList = Hardware.pciDevices(pciLookup);
 
         // 4. USB Devices
         IdLookup usbLookup = IdLookup.usb();
