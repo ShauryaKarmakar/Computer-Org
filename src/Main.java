@@ -13,7 +13,9 @@ public class Main {
         // 1. Processor Report
         System.out.println("--- [1. PROCESSOR REPORT] ---");
 
+        //CPUInfo.displayCpu();
         CPUInfo.displayCpu();
+
 
         // 2. Memory Report
         System.out.println("--- [2. MEMORY REPORT] ---");
@@ -72,16 +74,9 @@ public class Main {
         // 6. Detailed processor and memory breakdown and 7. the virtualisation check.
         // Both read /proc and /sys directly, so they only run when those files are what the
         // readings come from (Linux, or a copy of them given with -Dhw.root).
-        if (Hardware.usingWindows()) {
-            System.out.println("--- [6-7. DETAILED BREAKDOWN] ---");
-            System.out.println("Skipped: the per core breakdown and the virtualisation check read /proc and /sys.");
-            System.out.println();
-        } else {
-            System.out.println("--- [6. DETAILED BREAKDOWN] ---");
-
-            System.out.println("\n--- [7. VIRTUALISATION DETECTION] ---");
-            VirtualizationDetective.displayVMScore();
-        }
+        
+        System.out.println("\n--- [7. VIRTUALISATION DETECTION] ---");
+        VirtualizationDetective.displayVMScore();
 
         // 8. The same report as files, if any format was named on the command line
         if (args.length > 0) {

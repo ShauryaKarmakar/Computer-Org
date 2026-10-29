@@ -1,5 +1,6 @@
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -17,7 +18,7 @@ public class CPUInfo
     private static final Path STAT = SysFile.path("/proc/stat");
 
 
-    public static displayCpu() throws InterruptedException { // Method to display the CPU details, InterruptedException is needed for the TimeUnit.SECONDS.sleep() method
+    public static void displayCpu() throws InterruptedException { // Method to display the CPU details, InterruptedException is needed for the TimeUnit.SECONDS.sleep() method
 
         /*
         System.out.println("_______________________________________________________\n");
@@ -136,17 +137,13 @@ public class CPUInfo
         System.out.println("Steal Time:      Time a virtual CPU wanted to run but had to wait as another virtual machine was being serviced (only really applies in virutlised environments like AWS EC2 or VMware).\n");
         System.out.println("Guest Time:      Time spent running a virtual CPU for a guest operating system (Already included in 'Guest Time').\n");
         System.out.println("Nice Guest Time: Time spent running a virutal CPU for a gest OS with a lower priority (already included in 'Nice Time')");
-        System.out.println("_______________________________________________________\n");
+        System.out.println("_______________________________________________________\n");    
         
-        return cpuLoad;
+
+    
     }
 }
-/*
-    public static long getBusyTotal(List<long> busyList) {
 
-        return 1;
-
-    }*/
 
     // Goes through the cpuInfo file and adds one to the count variable for each line that starts with processor that it finds, it calculates the number of cores (logical processors on the computer)
     public static int getCount()

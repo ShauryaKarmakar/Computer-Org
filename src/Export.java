@@ -110,7 +110,7 @@ class Export
         out.append(fact("Buffer memory", Math.round(buffers * 100.0) / 100.0 + " GiB"));
         out.append("</tbody>\n</table>\n</section>\n");
 
-        // Pie chart to display memory usage (This code was generated with AI)
+        // Pie chart to display memory usage (pie chart code was generated with AI)
         out.append("<section>");
         out.append("<h2>Memory usage</h2>");
         out.append("<div style=\"width:160px;height:160px;border-radius:50%;");
