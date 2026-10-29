@@ -17,7 +17,7 @@ public class CPUInfo
     private static final Path STAT = SysFile.path("/proc/stat");
 
 
-    public static void displayCpu() throws InterruptedException { // Method to display the CPU details, InterruptedException is needed for the TimeUnit.SECONDS.sleep() method
+    public static displayCpu() throws InterruptedException { // Method to display the CPU details, InterruptedException is needed for the TimeUnit.SECONDS.sleep() method
 
         /*
         System.out.println("_______________________________________________________\n");
@@ -137,6 +137,8 @@ public class CPUInfo
         System.out.println("Guest Time:      Time spent running a virtual CPU for a guest operating system (Already included in 'Guest Time').\n");
         System.out.println("Nice Guest Time: Time spent running a virutal CPU for a gest OS with a lower priority (already included in 'Nice Time')");
         System.out.println("_______________________________________________________\n");
+        
+        return cpuLoad;
     }
 }
 /*
