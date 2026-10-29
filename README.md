@@ -36,7 +36,19 @@ file does not crash program.
 | `USBDevice` | `USBDevice(bus, device, vendorId, productId, vendorName, productName)`, `getBus()`, `getDevice()`, `getVendorId()`, `getProductId()`, `getVendorName()`, `getProductName()`, `toString()` | built by `Hardware` on either platform, names looked up in `IdLookup` |
 | `PCIVendorComparator` | `compare(d1, d2)` - vendor name A-Z, then the address | sorts the `PCIDevice` list |
 | `PCINumericComparator` | `compare(d1, d2)` - bus, then device, then function (the BDF address) | sorts the `PCIDevice` list |
-| `Export` | `html(pci, usb, lookup)`, `csv(pci, usb)` - run as `java -cp out Main html csv` | writes `export/report.html` and `export/devices.csv` |
+| `Export` | `html(pci, usb, lookup)`, `csv(pci, usb)` - run as `java -cp out Main html csv` | writes `export/report.html` (a plain page with the machine details, the PCI and USB tables and the class summary) and `export/devices.csv` |
+
+### Saved reports
+
+Naming `html` and/or `csv` after `Main` also saves the report as a file. The files go into the `export` folder, which is made if it is not there yet:
+
+    java -cp out Main html       -> export/report.html
+    java -cp out Main csv        -> export/devices.csv
+    java -cp out Main html csv   -> both
+
+`report.html` is a plain page, not a styled one: Arial on a white background, with each table given a thin grey border and a grey heading row. The CSS is written into the page itself, so it opens by double clicking the file, with no server and no internet connection needed. It has the machine summary, one row per PCI device, one row per USB device, and the count of devices in each PCI class. If there are no USB devices (on a VM, for example) that section says so instead of showing an empty table.
+
+`devices.csv` puts the PCI and USB devices in one table, with a `type` column saying which kind each row is, and opens in Excel, Numbers or Sheets.
 
 
 ## Sources / websites used

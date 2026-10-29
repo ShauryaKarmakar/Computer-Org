@@ -33,27 +33,17 @@ class Export
     static final Path FOLDER = Path.of("export");
 
     private static final DateTimeFormatter STAMP = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-    private static final String FONT = "system-ui, 'Segoe UI', Arial, sans-serif";
 
     private static final String[] CSS = {
-        "body { margin: 0; padding: 32px 20px 48px; background: #f5f7fa; color: #22303f;",
-        "       font-family: " + FONT + "; line-height: 1.5; }",
-        "main, footer { max-width: 1000px; margin: 0 auto; }",
-        "h1 { font-size: 24px; margin: 0 0 4px; }",
-        "p.sub { color: #6b7785; font-size: 13px; margin: 0 0 28px; }",
-        "p.empty { color: #6b7785; margin: 0; }",
-        "section { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px;",
-        "          padding: 18px 20px; margin-bottom: 20px; }",
-        "h2 { font-size: 15px; text-transform: uppercase; letter-spacing: .06em;",
-        "     color: #4a7fb5; margin: 0 0 14px; }",
-        "table { width: 100%; border-collapse: collapse; font-size: 14px;",
-        "        display: block; overflow-x: auto; }",
-        "th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid #edf1f6; }",
-        "thead th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em;",
-        "           color: #6b7785; border-bottom: 2px solid #e2e8f0; }",
-        "tbody tr:nth-child(even) { background: #fafcfe; }",
-        "td.num, th.num { font-variant-numeric: tabular-nums; white-space: nowrap; }",
-        "footer { color: #8a95a1; font-size: 12px; }"
+        "body { font-family: Arial, sans-serif; margin: 24px; color: #222222; }",
+        "h1 { font-size: 22px; margin: 0 0 4px; }",
+        "p { font-size: 14px; margin: 0 0 24px; }",
+        "h2 { font-size: 18px; margin: 28px 0 8px; }",
+        "table { border-collapse: collapse; margin-bottom: 10px; }",
+        "th, td { border: 1px solid #bbbbbb; padding: 6px 10px; text-align: left;",
+        "         font-size: 14px; vertical-align: top; }",
+        "th { background-color: #eeeeee; }",
+        "td.num { white-space: nowrap; }"
     };
 
     private Export()
@@ -63,37 +53,50 @@ class Export
     /** The HTML page, written to export/report.html. */
     static Path html(List<PCIDevice> pci, List<USBDevice> usb, IdLookup lookup) throws IOException
     {
+        // work out the class counts and the memory figures first, before any of the html gets built
         Map<String, Integer> counts = classCounts(pci, lookup);
         long totalKiB = Hardware.totalMemory();
         long usedKiB = Hardware.usedMemory();
         double usage = totalKiB > 0 ? usedKiB * 100.0 / totalKiB : 0.0;
 
         StringBuilder out = new StringBuilder();
+        // the page is built as one big string, we keep adding bits on the end of it and write it out
+        // in one go at the bottom. the top part is the doctype, then charset so names with accents
+        // come out right, and the viewport line so its readable on a phone
         out.append("<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n");
         out.append("<meta charset=\"utf-8\">\n");
         out.append("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n");
         out.append("<title>CS4421 System Hardware &amp; Topology Reporter</title>\n");
+        // the css sits inside the file instead of a seperate file, that way the report still looks
+        // right if you open it on a computer thats offline
         out.append("<style>\n").append(String.join("\n", CSS)).append("\n</style>\n");
         out.append("</head>\n<body>\n<main>\n");
 
+        // heading and the date it was generated, the date is handy when you comparing two reports
         out.append("<h1>CS4421 System Hardware &amp; Topology Reporter</h1>\n");
-        out.append("<p class=\"sub\">Generated ")
+        out.append("<p>Generated ")
            .append(escape(LocalDateTime.now().format(STAMP)))
            .append("</p>\n");
 
+        // machine summary, this is the same information as the console report just layed out as a table
         out.append("<section>\n<h2>Machine</h2>\n<table>\n<tbody>\n");
         out.append(fact("Processor", Hardware.cpuModel()));
         out.append(fact("Logical cores", String.valueOf(Hardware.coreCount())));
+        // memory is read in KiB so it gets divided twice to show GiB, 1024 KiB in a MiB and 1024 MiB in a GiB
         out.append(fact("Total memory", String.format("%.2f GiB (%d KiB)", totalKiB / (1024.0 * 1024.0), totalKiB)));
         out.append(fact("Used memory", String.format("%.2f GiB (%.1f%% of total)", usedKiB / (1024.0 * 1024.0), usage)));
         out.append(fact("PCI devices", String.valueOf(pci.size())));
         out.append(fact("USB devices", String.valueOf(usb.size())));
         out.append("</tbody>\n</table>\n</section>\n");
 
+        // pci devices, one row each. the ids are printed in hex so they match what lspci shows and what
+        // you would search for in pci.ids
         out.append("<section>\n<h2>PCI devices (").append(pci.size()).append(")</h2>\n");
         out.append("<table>\n<thead>\n<tr><th>Address</th><th>Vendor</th><th>Device</th>")
            .append("<th>Vendor ID</th><th>Device ID</th><th>Class</th></tr>\n</thead>\n<tbody>\n");
         for (PCIDevice dev : pci) {
+            // every value gets escaped before it goes in the page, the names in the id files sometimes
+            // have & or < in them and that would be read as html and break the layout
             out.append("<tr><td class=\"num\">").append(escape(dev.getRawAddress())).append("</td>")
                .append("<td>").append(escape(dev.getVendorName())).append("</td>")
                .append("<td>").append(escape(dev.getDeviceName())).append("</td>")
@@ -103,13 +106,16 @@ class Export
         }
         out.append("</tbody>\n</table>\n</section>\n");
 
+        // usb devices. a vm or a cloud server can have none at all, so in that case say so instead of
+        // printing a empty table
         out.append("<section>\n<h2>USB devices (").append(usb.size()).append(")</h2>\n");
         if (usb.isEmpty()) {
-            out.append("<p class=\"empty\">No USB devices detected (VM or cloud server environment).</p>\n");
+            out.append("<p>No USB devices detected (VM or cloud server environment).</p>\n");
         } else {
             out.append("<table>\n<thead>\n<tr><th>Bus</th><th>Device</th><th>Vendor</th><th>Product</th>")
                .append("<th>Vendor ID</th><th>Product ID</th></tr>\n</thead>\n<tbody>\n");
             for (USBDevice dev : usb) {
+                // bus and device are padded to 3 digits, thats how lsusb shows them as well
                 out.append("<tr><td class=\"num\">").append(String.format("%03d", dev.getBus())).append("</td>")
                    .append("<td class=\"num\">").append(String.format("%03d", dev.getDevice())).append("</td>")
                    .append("<td>").append(escape(dev.getVendorName())).append("</td>")
@@ -121,6 +127,8 @@ class Export
         }
         out.append("</section>\n");
 
+        // the counts are worked out in classCounts() lower down, a TreeMap is used there so the
+        // classes come out in alphabetical order
         out.append("<section>\n<h2>Class summary</h2>\n");
         out.append("<table>\n<thead>\n<tr><th>Class</th><th class=\"num\">Devices</th></tr>\n</thead>\n<tbody>\n");
         for (Map.Entry<String, Integer> entry : counts.entrySet()) {
@@ -129,8 +137,7 @@ class Export
         }
         out.append("</tbody>\n</table>\n</section>\n");
 
-        out.append("</main>\n<footer>Read from /proc and /sys; names come from the pci.ids and usb.ids files.</footer>\n");
-        out.append("</body>\n</html>\n");
+        out.append("</main>\n</body>\n</html>\n");
 
         return write("report.html", out.toString());
     }

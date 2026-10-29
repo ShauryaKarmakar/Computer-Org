@@ -15,6 +15,8 @@ class MemInfo
         long total = getTotal();
         long free = getFree();
         long available = getAvailable();
+        // used is total minus available, not total minus free, because free leaves out the memory the
+        // kernel can take back when a program asks for it
         long used = getUsed(total, available);
         long buffers = getBuffers();
         long cached = getCached();
@@ -23,15 +25,19 @@ class MemInfo
         long inactive = getInactive();
 
         // Displaying memory details
+        // memory half of the detailed report, everything gets printed in KiB, MiB and GiB because KiB is
+        // what linux gives you but the other two are easier to picture
         System.out.println("_______________________________________________________\n");
         System.out.println("Displaying memory details:");
         System.out.println("_______________________________________________________\n");
 
         // Format data into a table
+        // column headers, the widths are picked by hand so the columns line up under each other
         System.out.printf("%8s %12s %15s %13s%n", "Name", "KiB", "MiB", "GiB");
         System.out.println("_______________________________________________________\n");
 
         // Format and display each memory detail
+        // one line per value, format() does the unit conversions and prints it out
         format("Total", total);
         format("Used", used);
         format("Free", free);
@@ -48,6 +54,7 @@ class MemInfo
 
         // Explanation
         System.out.println("_______________________________________________________\n");
+        // plain english for each value below, took from the kernel docs and the superuser page in the readme
         System.out.println("Explanation of the above details:\n");
         System.out.println("Total:      This is the total amount of physical RAM on this computer. \n");
         System.out.println("Used:       This is the total amount of RAM curently being used by the computer (total minus available).\n");
@@ -63,6 +70,7 @@ class MemInfo
     /** Method for formating the memory details into a table */
     public static void format(String name, long value)
     {
+        // 1024 KiB in a MiB and 1024 MiB in a GiB, rounded to 2 decimals so the table dont get silly wide
         double mib = value / (1024.0);
         double gib = value / (1048576.0);
         System.out.printf("%-12s %12s %14s %12s%n", name, value + " KiB", Math.round(mib * 100.0) / 100.0 + " MiB", Math.round(gib * 100.0) / 100.0 + " GiB");

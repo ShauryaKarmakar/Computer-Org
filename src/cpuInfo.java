@@ -21,6 +21,9 @@ class CPUInfo
      */
     public static void displayCpu() throws InterruptedException // InterruptedException is needed for the TimeUnit.SECONDS.sleep() method
     {
+        // this is the cpu half of the detailed report. busy and idle in /proc/stat are totals since the
+        // computer booted, so reading them once tells you nothing on its own, thats why it reads them,
+        // waits a second, and reads them again to get the difference
         System.out.println("_______________________________________________________\n");
         System.out.println("Displaying CPU details (no. of cores, model, CPU load)");
         System.out.println("_______________________________________________________");
@@ -28,6 +31,8 @@ class CPUInfo
         // Set model type and number of cores to variables to avoid constantly reading the /proc/cpuinfo file
         String model = getModel();
         int count = getCount();
+        // siblings is how many logical cpus the os sees and cores is the physical ones, the two are only
+        // different when hyperthreading is turned on
         int siblings = siblings();
         int cores = cores();
 
@@ -56,12 +61,15 @@ class CPUInfo
 
         // First iteration for the cores, busy and idle ticks are stored in a list for future use
         for (int i = 0; i < count; i++) {
+            // first read of every core, kept in the list so the second read has something to compare against
             busyList.add(getBusy(i));
             idleList.add(getIdle(i));
         }
 
         System.out.println("Pausing for 1 second to calculate CPU load. \n");
 
+        // without the sleep both reads would be the same so the busy difference would be 0, and 0 divided
+        // by 0 comes out as nan, so the sleep is what makes the load reading mean anything
         TimeUnit.SECONDS.sleep(1); // Pausing for a second to get different busy / idle values
 
         // Second iteration for the cores, each core is printed out alongside its busy / idle ticks and its average load
@@ -90,6 +98,8 @@ class CPUInfo
             System.out.println("Total amount of time since boot: " + totalT);
             System.out.println();
 
+            // difference between the two reads is the work this core done in the last second, load is
+            // just busy divided by busy + idle
             long localBusyT = (busy - busyList.get(i)); // Minuses the previous iteration's busy value from the current iteration's busy value to get the difference
             long localIdleT = (idle - idleList.get(i));
             double localLoad = ((double) localBusyT / (localBusyT + localIdleT)) * 100; // localBusyT is changed from long to double to save the decimal values
@@ -101,7 +111,9 @@ class CPUInfo
             System.out.println("____________________________");
         }
 
+        // average is all the core loads added together then divided by the amount of cores
         System.out.println("Average CPU load = " + (Math.round(localLoadT / count * 100.0) / 100.0) + "%\n");
+        // the explanation at the end, whoever reads the report probably dont know what steal time means
         System.out.println("Explanation of CPU details: \n");
         System.out.println("____________________________\n");
         System.out.println("Clock speed:     This refers to how many cycles per second the core is doing (1 MHz is a million cycles per second).\n");
