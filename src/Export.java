@@ -33,27 +33,17 @@ class Export
     static final Path FOLDER = Path.of("export");
 
     private static final DateTimeFormatter STAMP = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-    private static final String FONT = "system-ui, 'Segoe UI', Arial, sans-serif";
 
     private static final String[] CSS = {
-        "body { margin: 0; padding: 32px 20px 48px; background: #f5f7fa; color: #22303f;",
-        "       font-family: " + FONT + "; line-height: 1.5; }",
-        "main, footer { max-width: 1000px; margin: 0 auto; }",
-        "h1 { font-size: 24px; margin: 0 0 4px; }",
-        "p.sub { color: #6b7785; font-size: 13px; margin: 0 0 28px; }",
-        "p.empty { color: #6b7785; margin: 0; }",
-        "section { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px;",
-        "          padding: 18px 20px; margin-bottom: 20px; }",
-        "h2 { font-size: 15px; text-transform: uppercase; letter-spacing: .06em;",
-        "     color: #4a7fb5; margin: 0 0 14px; }",
-        "table { width: 100%; border-collapse: collapse; font-size: 14px;",
-        "        display: block; overflow-x: auto; }",
-        "th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid #edf1f6; }",
-        "thead th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em;",
-        "           color: #6b7785; border-bottom: 2px solid #e2e8f0; }",
-        "tbody tr:nth-child(even) { background: #fafcfe; }",
-        "td.num, th.num { font-variant-numeric: tabular-nums; white-space: nowrap; }",
-        "footer { color: #8a95a1; font-size: 12px; }"
+        "body { font-family: Arial, sans-serif; margin: 24px; color: #222222; }",
+        "h1 { font-size: 22px; margin: 0 0 4px; }",
+        "p { font-size: 14px; margin: 0 0 24px; }",
+        "h2 { font-size: 18px; margin: 28px 0 8px; }",
+        "table { border-collapse: collapse; margin-bottom: 10px; }",
+        "th, td { border: 1px solid #bbbbbb; padding: 6px 10px; text-align: left;",
+        "         font-size: 14px; vertical-align: top; }",
+        "th { background-color: #eeeeee; }",
+        "td.num { white-space: nowrap; }"
     };
 
     private Export()
@@ -84,7 +74,7 @@ class Export
 
         // heading and the date it was generated, the date is handy when you comparing two reports
         out.append("<h1>CS4421 System Hardware &amp; Topology Reporter</h1>\n");
-        out.append("<p class=\"sub\">Generated ")
+        out.append("<p>Generated ")
            .append(escape(LocalDateTime.now().format(STAMP)))
            .append("</p>\n");
 
@@ -120,7 +110,7 @@ class Export
         // printing a empty table
         out.append("<section>\n<h2>USB devices (").append(usb.size()).append(")</h2>\n");
         if (usb.isEmpty()) {
-            out.append("<p class=\"empty\">No USB devices detected (VM or cloud server environment).</p>\n");
+            out.append("<p>No USB devices detected (VM or cloud server environment).</p>\n");
         } else {
             out.append("<table>\n<thead>\n<tr><th>Bus</th><th>Device</th><th>Vendor</th><th>Product</th>")
                .append("<th>Vendor ID</th><th>Product ID</th></tr>\n</thead>\n<tbody>\n");
@@ -147,10 +137,7 @@ class Export
         }
         out.append("</tbody>\n</table>\n</section>\n");
 
-        // footer says where the numbers came from, /proc and /sys for the readings and the id files
-        // for the vendor and device names
-        out.append("</main>\n<footer>Read from /proc and /sys; names come from the pci.ids and usb.ids files.</footer>\n");
-        out.append("</body>\n</html>\n");
+        out.append("</main>\n</body>\n</html>\n");
 
         return write("report.html", out.toString());
     }
