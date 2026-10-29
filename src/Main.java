@@ -21,10 +21,6 @@ public class Main {
         System.out.println(YELLOW + BOLD + "=================================================================\n");
 
         // 1. Processor Report
-        System.out.println("--- [1. PROCESSOR REPORT] ---");
-        System.out.println("Model: " + Hardware.cpuModel());
-        int cores = Hardware.coreCount();
-        System.out.println("Cores: " + cores);
         printSection(GREEN + "1. PROCESSOR REPORT"+ RESET);
         System.out.printf("%-15s %s%n","Model:" , Hardware.cpuModel());
         int cores = Hardware.coreCount();
@@ -32,9 +28,6 @@ public class Main {
         System.out.println();
 
         // 2. Memory Report
-        System.out.println("--- [2. MEMORY REPORT] ---");
-        long totalKiB = MemInfo.getTotal();
-        long usedKiB = MemInfo.getUsed();
         printSection(GREEN + "2. MEMORY REPORT"+ RESET);
         long totalKiB = Hardware.totalMemory();
         long usedKiB = Hardware.usedMemory();
