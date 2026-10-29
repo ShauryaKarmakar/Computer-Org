@@ -9,23 +9,15 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Writes the report out as files, so the results can be kept and opened later on
- * another machine. Nothing is written unless a format is named on the command
- * line, so the usual
- *
- *     java -cp out Main
- *
- * still prints the text report and nothing else. To get the files, name the
- * formats you want:
+ * Writes the report out as files. Nothing happens unless html or csv is given on
+ * the command line, so plain "java -cp out Main" still just prints the text.
  *
  *     java -cp out Main html       -> export/report.html
  *     java -cp out Main csv        -> export/devices.csv
  *     java -cp out Main html csv   -> both
  *
- * The files go into the "export" folder, which is created if it is not there yet,
- * and each path is printed. The HTML page keeps its styles inside the one file,
- * so it can be opened straight from the file system: no server and no internet
- * connection needed. The CSV opens in Excel, Numbers or Sheets.
+ * Both land in the export folder, which gets made if it isnt there. The styles sit
+ * inside the html file itself so it opens fine without a server or internet.
  */
 class Export
 {
@@ -112,12 +104,11 @@ class Export
         if (usb.isEmpty()) {
             out.append("<p>No USB devices detected (VM or cloud server environment).</p>\n");
         } else {
-            out.append("<table>\n<thead>\n<tr><th>Bus</th><th>Device</th><th>Vendor</th><th>Product</th>")
+            out.append("<table>\n<thead>\n<tr><th>Bus</th><th>Vendor</th><th>Product</th>")
                .append("<th>Vendor ID</th><th>Product ID</th></tr>\n</thead>\n<tbody>\n");
             for (USBDevice dev : usb) {
-                // bus and device are padded to 3 digits, thats how lsusb shows them as well
-                out.append("<tr><td class=\"num\">").append(String.format("%03d", dev.getBus())).append("</td>")
-                   .append("<td class=\"num\">").append(String.format("%03d", dev.getDevice())).append("</td>")
+                // a device can be on a few buses, so that column holds all of them
+                out.append("<tr><td class=\"num\">").append(busText(dev)).append("</td>")
                    .append("<td>").append(escape(dev.getVendorName())).append("</td>")
                    .append("<td>").append(escape(dev.getProductName())).append("</td>")
                    .append("<td class=\"num\">").append(hex(dev.getVendorId(), 4)).append("</td>")
@@ -156,7 +147,7 @@ class Export
                 dev.getDeviceName(), hex(dev.getDeviceId(), 4), hex(dev.getClassCode(), 6));
 
         for (USBDevice dev : usb)
-            row(out, "USB", String.format("%03d:%03d", dev.getBus(), dev.getDevice()), dev.getVendorName(),
+            row(out, "USB", busText(dev), dev.getVendorName(),
                 hex(dev.getVendorId(), 4), dev.getProductName(), hex(dev.getProductId(), 4), "");
 
         return write("devices.csv", out.toString());
@@ -179,6 +170,18 @@ class Export
     private static String fact(String name, String value)
     {
         return "<tr><th>" + escape(name) + "</th><td>" + escape(value) + "</td></tr>\n";
+    }
+
+    /** The buses a device was seen on, written like "001, 002". */
+    private static String busText(USBDevice dev)
+    {
+        StringBuilder text = new StringBuilder();
+        for (int bus : dev.getBuses()) {
+            if (text.length() > 0)
+                text.append(", ");
+            text.append(String.format("%03d", bus));
+        }
+        return text.toString();
     }
 
     /** One line of the CSV table, with each field quoted only if it needs to be. */

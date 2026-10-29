@@ -7,13 +7,9 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * The USB devices that Linux has found, read from /sys/bus/usb/devices.
- *
- * Root hubs (the controllers inside the computer) are included in the list, so a
- * machine with nothing plugged in can still show one or more entries. A virtual
- * machine or the cloud server may have no USB at all; getCount() then returns 0.
- * Devices are listed in the same order as the lsusb command (by bus number, then
- * device number). The list is read once; call rescan() to read it again.
+ * The usb devices linux has found, read from /sys/bus/usb/devices. Each device
+ * gets its own folder in there, so the folders are read once and kept in a list
+ * and the getters pick the files out of the folder of whichever device is asked for.
  */
 class USBInfo
 {
@@ -27,13 +23,13 @@ class USBInfo
             if (Files.isDirectory(ROOT)) {
                 try (DirectoryStream<Path> dir = Files.newDirectoryStream(ROOT)) {
                     for (Path p : dir)
-                        if (Files.exists(p.resolve("idVendor")))  // skip interfaces
+                        if (Files.exists(p.resolve("idVendor")))  // interfaces have no idVendor
                             found.add(p);
                 } catch (IOException e) {
-                    // leave the list as it is
+                    // nothing to do, the list stays empty
                 }
             }
-            // lsusb order: by bus number, then device number
+            // same order lsusb prints them in
             found.sort(Comparator.comparingLong((Path p) -> SysFile.number(p.resolve("busnum")))
                                  .thenComparingLong(p -> SysFile.number(p.resolve("devnum"))));
             devices = found;
@@ -41,61 +37,61 @@ class USBInfo
         return devices;
     }
 
-    /** Read the list of devices again. */
+    /** Reads the folders again. */
     public static void rescan()
     {
         devices = null;
     }
 
-    /** How many USB devices there are (0 if the machine has no USB support). */
+    /** How many devices there are. 0 if there is no /sys/bus/usb at all. */
     public static int getCount()
     {
         return list().size();
     }
 
-    /** The name Linux gives the device, for example "1-2" or "usb1". */
+    /** The folder name, like "1-2" or "usb1". */
     public static String getName(int index)
     {
         return list().get(index).getFileName().toString();
     }
 
-    /** The vendor ID, for example 0x046d, or -1. The files hold it as plain hex digits. */
+    /** The vendor id, like 0x046d, or -1. */
     public static int getVendorId(int index)
     {
         return hex(index, "idVendor");
     }
 
-    /** The product ID (the USB name for the device ID), or -1. */
+    /** The product id (usb calls it product, not device), or -1. */
     public static int getProductId(int index)
     {
         return hex(index, "idProduct");
     }
 
-    /** The manufacturer text reported by the device itself, or "" if it has none. */
+    /** The maker name the device gives about itself, empty if it doesnt give one. */
     public static String getManufacturer(int index)
     {
         return SysFile.text(list().get(index).resolve("manufacturer"));
     }
 
-    /** The product text reported by the device itself, or "" if it has none. */
+    /** The product name the device gives about itself, empty if it doesnt give one. */
     public static String getProduct(int index)
     {
         return SysFile.text(list().get(index).resolve("product"));
     }
 
-    /** The bus number the device is on, or -1. */
+    /** Which bus the device is on, or -1. */
     public static int getBusNumber(int index)
     {
         return (int) SysFile.number(list().get(index).resolve("busnum"));
     }
 
-    /** The device number on its bus, or -1. */
+    /** The device number on that bus, or -1. */
     public static int getDeviceNumber(int index)
     {
         return (int) SysFile.number(list().get(index).resolve("devnum"));
     }
 
-    // The USB id files hold bare hex such as "1d6b" with no 0x prefix.
+    // usb.ids has bare hex in these files, no 0x in front of it
     private static int hex(int index, String file)
     {
         String s = SysFile.text(list().get(index).resolve(file));

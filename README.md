@@ -15,6 +15,21 @@ From the project root run:
 * `javac -d out src/*.java` runs the java compiler (`-d out` tells the compiler to put all the .class files into the previously made out directory. `src/*.java` the * tells the compiler to compile all the java files in the src folder).
 * `java -cp out Main` executes the compiled program using `java`. it looks for the Main.class file and runs it (`-cp out` gets it to look inside the 'out' directory for the compiled files).
 
+### Running it on Windows
+
+The commands above are for a Linux or macOS shell: `mkdir -p` is not a Windows command (in `cmd` it makes a folder called `-p`, which can be deleted). In `cmd` or PowerShell, from the project folder:
+
+    javac -d out src\*.java
+    %JAVA_HOME%\bin\java.exe -cp out Main
+
+* `javac -d out` makes the `out` folder if it is not there, so the `mkdir` line is not needed.
+* `%JAVA_HOME%` is the JDK that came with `javac` (Java 17). The plain `java` on the PATH is often an older version (Java 8), and it cannot run the classes from `javac`: it stops with `UnsupportedClassVersionError ... class file version 61.0`. Naming the `java.exe` inside `JAVA_HOME` avoids that.
+* In PowerShell, `%JAVA_HOME%` is written `$env:JAVA_HOME` and the path needs `&` in front: `& "$env:JAVA_HOME\bin\java.exe" -cp out Main`.
+
+### run.bat
+
+`run.bat` in the project folder does those two steps together: double click it, or type `run.bat` in a command prompt. Anything written after its name is passed to the program, so `run.bat html` also writes `export\report.html`, and `run.bat html csv` writes both files.
+
 ## The classes
 
 `CPUInfo`, `MemInfo`, `PCIInfo`, `USBInfo` and `SysFile` are used through `static` methods. A

@@ -2,35 +2,25 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * The same four pieces of information as the Linux readers, but asked of Windows
- * instead of read from /proc and /sys. Windows keeps them behind its management
- * interface, so one short PowerShell script is run once and its answer is read
- * back here. Nothing else in the program has to know the difference.
+ * Gets the same four things as the linux readers, but windows has no /proc so it
+ * has to be asked. One powershell script runs once at the start and the rest of
+ * this class just picks the answer apart.
  *
- * Windows does not describe its hardware quite the way Linux does, so a few
- * things are worked out on the way:
+ * Windows reports things a bit differently, so a few bits get fixed up on the way:
+ *  - the pci address is built out of the device location so it looks like 0000:00:1f.5
+ *  - the class code is taken out of the CC_ part of the hardware id
+ *  - the usb bus and device numbers are the hub and port windows gives, they wont
+ *    be the same numbers lsusb would show
+ *  - used memory is total minus available, same way linux counts it
  *
- *   - the PCI address comes from the device's location (bus 0, device 31,
- *     function 5) and is written in the same 0000:00:1f.5 form Linux uses, so the
- *     numeric sort and the vendor sort behave the same on both;
- *   - the class code is the real 24 bit code, taken from the CC_ entry of the
- *     device's hardware id (CC_030000 for a display adapter, for example), so the
- *     class names come from pci.ids as usual;
- *   - a USB bus and device number is the hub and port Windows reports, which is
- *     the nearest thing it has to the numbering lsusb prints - they are not the
- *     same numbers lsusb would show;
- *   - memory is counted as total minus "available", the way Linux counts it, so
- *     cached memory is not reported as used.
- *
- * If PowerShell is missing or not allowed to run, available() is false and the
- * Linux readers are used instead, leaving the old behaviour untouched.
+ * If powershell is missing or blocked then available() is false and the linux
+ * readers are used instead, which is how it worked before windows support.
  */
 class WindowsInfo
 {
@@ -151,7 +141,8 @@ class WindowsInfo
         return devices;
     }
 
-    /** The USB devices, named from the id files, ordered by bus and then device. */
+    // the usb devices, one per entry windows gives us. the same device can come back
+    // on more than one bus, USBDevice.combine() sorts that out later
     static List<USBDevice> usbDevices(IdLookup lookup)
     {
         List<USBDevice> devices = new ArrayList<>();
@@ -168,13 +159,11 @@ class WindowsInfo
             int vendorId = Integer.parseInt(match.group(1), 16);
             int productId = Integer.parseInt(match.group(2), 16);
 
-            devices.add(new USBDevice(number(fields[2], 0), number(fields[3], 0),
-                    vendorId, productId,
+            devices.add(new USBDevice(number(fields[2], 0), vendorId, productId,
                     Hardware.name(lookup.vendorName(vendorId), "Vendor 0x%04x", vendorId),
                     Hardware.name(lookup.deviceName(vendorId, productId), "Product 0x%04x", productId)));
         }
 
-        devices.sort(Comparator.comparingInt(USBDevice::getBus).thenComparingInt(USBDevice::getDevice));
         return devices;
     }
 

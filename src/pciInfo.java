@@ -7,16 +7,9 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * The PCI devices that Linux has found, read from /sys/bus/pci/devices.
- *
- * Each device has a folder named like "0000:00:02.0", which means domain 0000,
- * bus 00, device 02, function 0. The devices are numbered 0, 1, 2 ... in that
- * order. The list is read once, the first time it is needed; call rescan() to
- * read it again.
- *
- * Vendor and device IDs are numbers (for example 0x8086 is Intel). The class code
- * is 24 bits: base class, sub class and interface. See IdLookup to turn these
- * numbers into names.
+ * The pci devices linux has found, read from /sys/bus/pci/devices. One folder per
+ * device, named like 0000:00:02.0, which is domain, bus, device, function. The
+ * folders are read once and the number is just the position in that list.
  */
 class PCIInfo
 {
@@ -32,7 +25,7 @@ class PCIInfo
                     for (Path p : dir)
                         found.add(p);
                 } catch (IOException e) {
-                    // leave the list as it is
+                    // nothing to do, the list stays empty
                 }
             }
             Collections.sort(found);
@@ -41,55 +34,55 @@ class PCIInfo
         return devices;
     }
 
-    /** Read the list of devices again (useful if hardware may have changed). */
+    /** Reads the folders again, in case hardware changed. */
     public static void rescan()
     {
         devices = null;
     }
 
-    /** How many PCI devices there are. */
+    /** How many pci devices there are. */
     public static int getCount()
     {
         return list().size();
     }
 
-    /** The address as text, for example "0000:00:02.0". */
+    /** The address as text, like "0000:00:02.0". */
     public static String getAddress(int index)
     {
         return list().get(index).getFileName().toString();
     }
 
-    /** The bus number, taken from the address. */
+    /** The bus number, cut out of the address. */
     public static int getBus(int index)
     {
         return Integer.parseInt(getAddress(index).substring(5, 7), 16);
     }
 
-    /** The device number on the bus, taken from the address. */
+    /** The device number on that bus, also cut out of the address. */
     public static int getDevice(int index)
     {
         return Integer.parseInt(getAddress(index).substring(8, 10), 16);
     }
 
-    /** The function number of the device, taken from the address. */
+    /** The function number, the bit after the dot. */
     public static int getFunction(int index)
     {
         return Integer.parseInt(getAddress(index).substring(11, 12), 16);
     }
 
-    /** The vendor ID, for example 0x8086, or -1 if it cannot be read. */
+    /** The vendor id, like 0x8086, or -1. */
     public static int getVendorId(int index)
     {
         return (int) SysFile.number(list().get(index).resolve("vendor"));
     }
 
-    /** The device ID, or -1 if it cannot be read. */
+    /** The device id, or -1. */
     public static int getDeviceId(int index)
     {
         return (int) SysFile.number(list().get(index).resolve("device"));
     }
 
-    /** The 24-bit class code, for example 0x060000 for a host bridge, or -1. */
+    /** The 24 bit class code, like 0x060000 for a host bridge, or -1. */
     public static int getClassCode(int index)
     {
         return (int) SysFile.number(list().get(index).resolve("class"));
