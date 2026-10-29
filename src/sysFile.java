@@ -4,35 +4,31 @@ import java.nio.file.Path;
 import java.util.List;
 
 /**
- * Small helpers for reading the text files that Linux provides under /proc and /sys.
- * Every method returns a harmless default (empty text or -1) when a file does not
- * exist, so a missing file never crashes a program.
+ * Little helpers for reading the text files under /proc and /sys. If a file is
+ * missing or cant be read the methods give back an empty string or -1 instead of
+ * throwing, so one missing file never stops the whole report.
  */
 class SysFile
 {
     /**
-     * Where /proc and /sys are looked for. Normally this is empty, meaning the real
-     * folders. For testing you can point the program at a copy of them, for example
-     * java -Dhw.root=/home/me/sample demo
+     * Normally empty, which means read the real /proc and /sys. Give -Dhw.root with
+     * a copy of them to run the linux side on a machine that isnt linux.
      */
     private static final String ROOT = System.getProperty("hw.root", "");
 
-    /**
-     * True when a hw.root folder was given, so the files are read from a copy of
-     * /proc and /sys rather than from the machine the program is running on.
-     */
+    /** True when a hw.root copy was given. */
     static boolean fromCopy()
     {
         return !ROOT.isEmpty();
     }
 
-    /** A path such as "/proc/stat", moved under the hw.root folder if one was given. */
+    /** A path like "/proc/stat", moved under the hw.root folder if there is one. */
     static Path path(String name)
     {
         return Path.of(ROOT + name);
     }
 
-    /** The whole file as one string with the trailing newline removed, or "" if unreadable. */
+    /** The whole file, trailing newline removed. "" if it cant be read. */
     static String text(Path file)
     {
         try {
@@ -42,7 +38,7 @@ class SysFile
         }
     }
 
-    /** All the lines of a file, or an empty list if unreadable. */
+    /** All the lines of a file, or an empty list. */
     static List<String> lines(Path file)
     {
         try {
@@ -52,10 +48,7 @@ class SysFile
         }
     }
 
-    /**
-     * A number from a file. Accepts decimal ("42") or hexadecimal with a 0x prefix
-     * ("0x8086"). Returns -1 if the file is missing or does not hold a number.
-     */
+    /** A number from a file. Handles "42" and "0x8086". -1 if it is neither. */
     static long number(Path file)
     {
         String s = text(file);

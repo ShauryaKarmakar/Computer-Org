@@ -6,27 +6,23 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Turns vendor, device and class numbers into names, using the pci.ids and usb.ids
- * files. Both files list a vendor on a line by itself, followed by its devices on
- * lines that start with a tab:
+ * Turns the numbers from /sys (vendor, device, class) into names using pci.ids or
+ * usb.ids. In those files a vendor is on its own line and its devices are the tab
+ * indented lines under it:
  *
  *     8086  Intel Corporation
  *         1237  440FX - 82441FX PMC [Natoma]
  *
- * Use it like this:
- *
- *     IdLookup pci = IdLookup.pci();
- *     System.out.println(pci.vendorName(0x8086));
- *     System.out.println(pci.deviceName(0x8086, 0x1237));
+ * The whole file is read once into three maps, then the lookups are just gets.
  */
 class IdLookup
 {
     private final Map<Integer, String> vendors = new HashMap<>();
     private final Map<Long, String> devices = new HashMap<>();
     private final Map<Integer, String> baseClasses = new HashMap<>();  // "C 01  Mass storage controller"
-    private final Map<Integer, String> classes = new HashMap<>();      // "\t06  SATA controller", pci.ids only
+    private final Map<Integer, String> classes = new HashMap<>();      // "\t06  SATA controller", only in pci.ids
 
-    /** Read a pci.ids or usb.ids file. Throws IOException if it cannot be read. */
+    /** Reads a whole pci.ids or usb.ids file. */
     public IdLookup(Path file) throws IOException
     {
         List<String> lines = Files.readAllLines(file);
@@ -38,18 +34,18 @@ class IdLookup
             if (line.isEmpty() || line.startsWith("#"))
                 continue;
 
-            if (line.startsWith("C ")) {                       // start of the class section
+            if (line.startsWith("C ")) {                       // the class section starts here
                 inClasses = true;
                 baseClass = Integer.parseInt(line.substring(2, 4), 16);
                 baseClasses.put(baseClass << 8, line.substring(6).strip());
             } else if (inClasses && line.startsWith("\t") && !line.startsWith("\t\t")) {
-                // a sub class line such as "\t00  Host bridge"
+                // a class line, like "\t00  Host bridge"
                 if (baseClass >= 0 && line.length() > 5 && isHex(line, 1, 3))
                     classes.put((baseClass << 8) | Integer.parseInt(line.substring(1, 3), 16),
                                 line.substring(5).strip());
             } else if (inClasses) {
                 if (Character.isUpperCase(line.charAt(0)) && !line.startsWith("C "))
-                    baseClass = -1;                             // some other section
+                    baseClass = -1;                             // a different section, stop caring
             } else if (isHex(line, 0, 4) && line.length() > 6) {
                 vendor = Integer.parseInt(line.substring(0, 4), 16);
                 vendors.put(vendor, line.substring(6).strip());
@@ -61,13 +57,13 @@ class IdLookup
         }
     }
 
-    /** Load pci.ids from the usual places: ./ids, then the system copies. */
+    /** Loads pci.ids, from ./ids first and then the system copies. */
     public static IdLookup pci() throws IOException
     {
         return find("pci.ids", "/usr/share/misc/pci.ids", "/usr/share/hwdata/pci.ids");
     }
 
-    /** Load usb.ids from the usual places: ./ids, then the system copies. */
+    /** Loads usb.ids the same way. */
     public static IdLookup usb() throws IOException
     {
         return find("usb.ids", "/usr/share/misc/usb.ids", "/usr/share/hwdata/usb.ids",
@@ -85,22 +81,19 @@ class IdLookup
         throw new IOException("cannot find " + name + " (looked in ./ids and the system folders)");
     }
 
-    /** The vendor's name, or null if the number is not in the file. */
+    /** The vendor name, or null if the file doesnt have that number. */
     public String vendorName(int vendorId)
     {
         return vendors.get(vendorId);
     }
 
-    /** The device's name for that vendor, or null if it is not in the file. */
+    /** The device name, or null if the file doesnt have it. */
     public String deviceName(int vendorId, int deviceId)
     {
         return devices.get(key(vendorId, deviceId));
     }
 
-    /**
-     * The name of a PCI class. Pass the 24-bit class code; the sub class name is
-     * returned if it is known, otherwise the base class name, otherwise null.
-     */
+    /** Name of a 24 bit pci class. Tries the sub class first, then the base class. */
     public String className(int classCode)
     {
         String sub = classes.get(classCode >> 8);
@@ -115,11 +108,13 @@ class IdLookup
         return vendors.size();
     }
 
+    // vendor and device packed into one number so they can share a map
     private static long key(int vendor, int device)
     {
         return ((long) vendor << 16) | device;
     }
 
+    // true if the text from "from" to "to" is lowercase hex, which is how the ids are written
     private static boolean isHex(String s, int from, int to)
     {
         if (s.length() < to)
