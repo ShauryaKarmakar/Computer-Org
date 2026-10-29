@@ -21,20 +21,12 @@ public class Main {
         // 1. Processor Report
         printSection(GREEN + "1. PROCESSOR REPORT"+ RESET);
         CPUInfo cpu = new CPUInfo();
-        cpu.displayCpu();
+        CPUInfo.displayCpu();
 
         // 2. Memory Report
         printSection(GREEN + "2. MEMORY REPORT"+ RESET);
-        long totalKiB = Hardware.totalMemory();
-        long usedKiB = Hardware.usedMemory();
-        double totalGiB = totalKiB / (1024.0 * 1024.0);
-        double usedGiB = usedKiB / (1024.0 * 1024.0);
-        double usagePercent = totalKiB > 0 ? ((double) usedKiB / totalKiB) * 100.0 : 0.0;
-
-        System.out.printf("%-15s %.2f GiB (%d KiB)%n", "Total Memory:", totalGiB, totalKiB);
-        System.out.printf("%-15s %.2f GiB (%d KiB)%n", "Used Memory:", usedGiB, usedKiB);
-        System.out.printf("%-15s %.1f%%%n", "Memory Usage:", usagePercent);
-        System.out.println();
+        
+        MemInfo.displayMemory();
 
         // 3. PCI Devices
         printSection(GREEN +"3. PCI DEVICES"+ RESET);
@@ -113,10 +105,7 @@ public class Main {
         // Both read /proc and /sys directly, so they only run when those files are what
         // the
         // readings come from (Linux, or a copy of them given with -Dhw.root).
-        if (!Hardware.usingWindows()) {
-            System.out.println("--- [6. DETAILED BREAKDOWN] ---");
-            CPUInfo.displayCpu();
-            MemInfo.displayMemory();
+
 
         //6. Virtualisation Detection
         printSection(GREEN +"6. VIRTUALIZATION DETECTION REPORT"+ RESET);

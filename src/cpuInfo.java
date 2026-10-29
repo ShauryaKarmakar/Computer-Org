@@ -31,7 +31,7 @@ class CPUInfo
         // computer booted, so reading them once tells you nothing on its own, thats why it reads them,
         // waits a second, and reads them again to get the difference
         System.out.println(CYAN + BOLD +"-----------------------------------------------------------------"+ RESET);
-        printSubSection("Displaying CPU details (no. of cores, model, CPU load)");
+        printSubSection("Displaying CPU details");
 
         // Set model type and number of cores to variables to avoid constantly reading the /proc/cpuinfo file
         String model = getModel();
@@ -49,10 +49,10 @@ class CPUInfo
         // Printing out the model and number of cores
         if (cores > 0) {
             System.out.println("\nComputer model: " + model);
-            System.out.println("There are " + count + " cores on this device.\n");
+            System.out.println("There are " + count + " processor on this device.\n");
 
             if (siblings > cores) {
-                System.out.println("This device has hyperthreading. Since it has " + cores + " physical cores yet " + (siblings / cores) + " threads per core (for a total of " + count + "). This means that each core in the CPU runs two threads in parallel, meaning it can work much more efficiently than it would otherwise.");
+                System.out.println("This device has hyperthreading. Since it has " + cores + " physical processors yet " + (siblings / cores) + " threads per core (for a total of " + count + "). This means that each core in the CPU runs two threads in parallel, meaning it can work much more efficiently than it would otherwise.");
             }
             else {
                 System.out.println("This device does not have hyperthreading.");
