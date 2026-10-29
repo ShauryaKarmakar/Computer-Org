@@ -172,37 +172,28 @@ public class Main {
     }
 
     int cores = CPUInfo.getCount();
-
     if (cores <= 0) {
         System.out.println("Unable to read CPU load.");
         return;
     }
-
     long[] startBusy = new long[cores];
     long[] startIdle = new long[cores];
-
     // Take initial reading
     for (int i = 0; i < cores; i++) {
         startBusy[i] = CPUInfo.getBusy(i);
         startIdle[i] = CPUInfo.getIdle(i);
     }
-
     // Wait for a second to get a second reading
     Thread.sleep(1000);
-
     double totalLoad = 0;
-
     // Take a second reading and work out the load
     for (int i = 0; i < cores; i++) {
         long busyTime = CPUInfo.getBusy(i) - startBusy[i];
         long idleTime = CPUInfo.getIdle(i) - startIdle[i];
-
         double loadPercent = 0;
-
         if (busyTime + idleTime > 0) {
             loadPercent = (busyTime * 100.0) / (busyTime + idleTime);
         }
-
         System.out.printf("Core %d: %.2f%%%n", i, loadPercent);
         totalLoad += loadPercent;
     }
