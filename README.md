@@ -36,6 +36,7 @@ file does not crash program.
 | `USBDevice` | `USBDevice(bus, device, vendorId, productId, vendorName, productName)`, `getBus()`, `getDevice()`, `getVendorId()`, `getProductId()`, `getVendorName()`, `getProductName()`, `toString()` | built by `Hardware` on either platform, names looked up in `IdLookup` |
 | `PCIVendorComparator` | `compare(d1, d2)` - vendor name A-Z, then the address | sorts the `PCIDevice` list |
 | `PCINumericComparator` | `compare(d1, d2)` - bus, then device, then function (the BDF address) | sorts the `PCIDevice` list |
+| `VirtualizationDetective` | `displayVMScore()` | Detects signs of virtualization using CPU information, PCI devices, USB devices, kernel modules and memory size. Produces a confidence score, displays evidence found, and reports the likelihood that the machine is running inside a virtual machine. |
 | `Export` | `html(pci, usb, lookup)`, `csv(pci, usb)` - run as `java -cp out Main html csv` | writes `export/report.html` (a plain page with the machine details, the PCI and USB tables and the class summary) and `export/devices.csv` |
 
 ### Saved reports
@@ -61,3 +62,6 @@ https://superuser.com/questions/521551/cat-proc-meminfo-what-do-all-those-number
 https://www.idnt.net/en-US/kb/941772#
 <br>
 https://man7.org/linux/man-pages/man5/proc_stat.5.html
+
+### Used to get ANSI codes for colour in terminal
+https://www.geeksforgeeks.org/python/print-colors-python-terminal/
