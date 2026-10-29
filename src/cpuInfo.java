@@ -87,7 +87,7 @@ class CPUInfo
             long busy = getBusy(i);
             long idle = getIdle(i);
 
-            System.out.println("_______________________");
+            System.out.println(CYAN + BOLD +"-----------------------------------------------------------------"+ RESET);
             System.out.println("Processor clock speed: " + getMHz() + " MHz");
             System.out.println("Busy ticks = " + busy + ", Idle ticks = " + idle);
             System.out.println("User time: " + stats[0]); // Time spent with normal processing in user mode.
@@ -113,7 +113,7 @@ class CPUInfo
 
             System.out.println("This core's load is " + localLoadRound + "%");
             localLoadT += localLoadRound;
-            System.out.println("____________________________");
+            System.out.println(CYAN + BOLD +"-----------------------------------------------------------------"+ RESET);
         }
 
         // average is all the core loads added together then divided by the amount of cores
