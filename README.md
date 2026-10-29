@@ -65,3 +65,4 @@ https://man7.org/linux/man-pages/man5/proc_stat.5.html
 
 ### Used to get ANSI codes for colour in terminal
 https://www.geeksforgeeks.org/python/print-colors-python-terminal/
+https://gist.github.com/JBlond/2fea43a3049b38287e5e9cefc87b2124
