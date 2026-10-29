@@ -51,6 +51,14 @@ class Export
         long usedKiB = Hardware.usedMemory();
         double usage = totalKiB > 0 ? usedKiB * 100.0 / totalKiB : 0.0;
 
+        double free = MemInfo.getFree() / 1048576.0; 
+        double available = MemInfo.getAvailable() / 1048576.0; 
+        double cached = MemInfo.getCached() / 1048576.0; 
+        double swapCached = MemInfo.getSwapCached() / 1048576.0; 
+        double active = MemInfo.getActive() / 1048576.0; 
+        double inActive = MemInfo.getInactive() / 1048576.0; 
+        double buffers = MemInfo.getBuffers() / 1048576.0; 
+
         StringBuilder out = new StringBuilder();
         // the page is built as one big string, we keep adding bits on the end of it and write it out
         // in one go at the bottom. the top part is the doctype, then charset so names with accents
@@ -80,6 +88,33 @@ class Export
         out.append(fact("PCI devices", String.valueOf(pci.size())));
         out.append(fact("USB devices", String.valueOf(usb.size())));
         out.append("</tbody>\n</table>\n</section>\n");
+
+
+        out.append("<section>\n<h2>Detailed Memory Details </h2>\n<table>\n<tbody>\n");
+        out.append(fact("Free memory", Math.round(free * 100.0) / 100.0 + " GiB"));
+        out.append(fact("Available memory", Math.round(available * 100.0) / 100.0 + " GiB"));
+        out.append(fact("Cached memory", Math.round(cached * 100.0) / 100.0 + " GiB"));
+        out.append(fact("SwapCached memory", Math.round(swapCached * 100.0) / 100.0 + " GiB"));
+        out.append(fact("Active memory", Math.round(active * 100.0) / 100.0   + " GiB"));
+        out.append(fact("Inactive memory", Math.round(inActive * 100.0) / 100.0 + " GiB"));
+        out.append(fact("Buffer memory", Math.round(buffers * 100.0) / 100.0 + " GiB"));
+        out.append("</tbody>\n</table>\n</section>\n");
+
+        // Pie chart to display memory usage (pie chart code was generated with AI)
+        out.append("<section>");
+        out.append("<h2>Memory usage</h2>");
+        out.append("<div style=\"width:160px;height:160px;border-radius:50%;");
+        out.append("background:conic-gradient(#ff0606 0% ");
+        out.append(usage);
+        out.append("%, #4a7fb5 ");
+        out.append(usage);
+        out.append("% 100%);\" role=\"img\" aria-label=\"Memory used: ");
+        out.append(String.format("%.1f%%", usage));
+        out.append("\"></div>\n");
+        out.append("<p>Used: ").append(String.format("%.1f%%", usage));
+        out.append(" &middot; Available: ").append(String.format("%.1f%%", 100.0 - usage));
+        out.append("</p>\n</section>\n");
+
 
         // pci devices, one row each. the ids are printed in hex so they match what lspci shows and what
         // you would search for in pci.ids

@@ -136,11 +136,6 @@ public class VirtualizationDetective {
             VMConfidenceScore += 10;
         }
 
-        System.out.println();
-        System.out.println("========================================");
-        System.out.println(" Virtualization Detection Report");
-        System.out.println("========================================");
-        System.out.println();
 
         System.out.println("VM Confidence Score: " + VMConfidenceScore);
         System.out.println();
@@ -163,6 +158,5 @@ public class VirtualizationDetective {
         }
 
         System.out.println();
-        System.out.println("========================================");
     }
 }
